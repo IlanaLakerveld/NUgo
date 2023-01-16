@@ -22,6 +22,7 @@ public class Board {
         }
     }
 
+
     /**
      * Makes a copy of the board
      *
@@ -43,7 +44,7 @@ public class Board {
     /**
      * @param row row
      * @param col colum
-     * @return returns what is on that place on the board, can either by empty, black or white.
+     * @return returns what is on that place on the board, can either be empty, black or white.
      */
     /*@ requires row >= 0 && row < DIM;
     requires col >= 0 && row < DIM;
@@ -56,8 +57,8 @@ public class Board {
 
     /**
      *
-     * @param row
-     * @param col
+     * @param row row
+     * @param col column
      * @return true is the field is part of the board
      */
     public boolean isField(int row, int col) {
@@ -74,9 +75,9 @@ public class Board {
     /**
      * Returns true if field is empty false if field is taken
      *
-     * @param row
-     * @param col
-     * @return
+     * @param row row
+     * @param col column
+     * @return true if field is empty false if field is taken
      */
     /*@ requires row >= 0 && row < DIM;
     requires col >= 0 && row < DIM;
@@ -108,8 +109,8 @@ public class Board {
     /**
      * set stone on the board
      *
-     * @param row
-     * @param col
+     * @param row row
+     * @param col colum
      * @param stone Either black or white depending on the player
      */
     public void setField(int row, int col, StoneColour stone) {
@@ -118,8 +119,8 @@ public class Board {
 
 
     /**
-     * @param row
-     * @param col
+     * @param row row
+     * @param col column
      * @return true if and only if all the side are either edge or the colour of the other person
      */
     public boolean surrounded(int row, int col) {
@@ -210,14 +211,14 @@ public class Board {
     /**
      * check if the on one side if "captured"
      *
-     * @param row
-     * @param col
+     * @param row row
+     * @param col column
      * @param stone    stone colour of this stone .
      * @param positive true if you want to look at the upper of right side false if you want to check on the right side
      * @param rowcount true if you want to check on the rows false if you want to check on columns
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
-    public boolean verzinnaam(int row, int col, StoneColour stone, boolean positive, boolean rowcount) {
+    private boolean verzinnaam(int row, int col, StoneColour stone, boolean positive, boolean rowcount) {
         int next;
         if (positive) {
             next = 1;
@@ -226,7 +227,7 @@ public class Board {
         }
 
         if (rowcount) {
-            if (isField(row + next,col)) {
+            if (!isField(row + next,col)) {
                 return true;
             } else if (getField(row + next, col) == StoneColour.EMPTY) {
                 return false;
@@ -234,25 +235,29 @@ public class Board {
                 return true;
 
             } else {
-                verzinnaam(row + next, col, stone, positive, rowcount);
+                return(verzinnaam(row + next, col, stone, positive, rowcount));
             }
 
         }
-        if (!rowcount) {
-            if (isField(row, col + 1)) {
+        else  { //(!rowcount)
+            if (!isField(row, col + 1)) {
                 return true;
             } else if (getField(row, col + 1) == StoneColour.EMPTY) {
                 return false;
             } else if (getField(row, col + 1) != StoneColour.EMPTY && getField(row, col + 1) != stone) {
                 return true;
             } else {
-                verzinnaam(row, col + 1, stone, positive, rowcount);
+                return(verzinnaam(row, col + 1, stone, positive, rowcount));
             }
 
         }
 
-        return positive; ///HIER NOG IETS ANDERS!!!!!!!!!!!
+
     }
+
+
+
+
 
 
 }
