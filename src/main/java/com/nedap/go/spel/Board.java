@@ -113,7 +113,7 @@ public class Board {
      * @param col colum
      * @param stone Either black or white depending on the player
      */
-    public void setField(int row, int col, StoneColour stone) {
+    protected void setField(int row, int col, StoneColour stone) {
         fields[row][col] = stone;
     }
 
@@ -123,9 +123,9 @@ public class Board {
      * @param col column
      * @return true if and only if all the side are either edge or the colour of the other person
      */
-    public boolean surrounded(int row, int col) {
+    public boolean isSurrounded(int row, int col) {
         StoneColour stone = getField(row, col);
-        if (verzinnaam(row, col, stone, true, true) && verzinnaam(row, col, stone, true, false) && verzinnaam(row, col, stone, false, true) && verzinnaam(row, col, stone, false, false)) {
+        if (checkerSideAreCaptured(row, col, stone, true, true) && checkerSideAreCaptured(row, col, stone, true, false) && checkerSideAreCaptured(row, col, stone, false, true) && checkerSideAreCaptured(row, col, stone, false, false)) {
             return true;
         }
         return false;
@@ -135,10 +135,11 @@ public class Board {
     public List<int[]> caputured(int row, int col) {
         List<int[]> list= new ArrayList<int[]>();
         // check if is actually surrounded
-        if(!surrounded(row,col)){
+        if(!isSurrounded(row,col)){
             return null ;
         }
         // check all directions
+        list.add(new int[]{2, 2});
         list.addAll(extracted(row, col,true));
         list.addAll(extracted(row,col,false));
         list.addAll(extractedcol(row,col,false));
@@ -159,9 +160,7 @@ public class Board {
         }
         while(sameColour){
             if(isField(row,col+counter)&& getField(row,col)==getField(row,col+counter)){
-                int[] thisField = new int[2] ;
-                thisField[0]= row  ;
-                thisField[1]= col+counter;
+                int[] thisField = new int[]{row,col+counter} ;
                 list.add(0,thisField);
                 if(up){
                     counter++ ;
@@ -189,9 +188,7 @@ public class Board {
         }
         while(sameColour){
             if(isField(row +counter, col) && getField(row, col) == getField(row +counter, col)){
-                int[] thisField = new int[2] ;
-                thisField[0]= row +counter ;
-                thisField[1]= col;
+                int[] thisField = new int[]{row +counter,col} ;
                 list.add(0,thisField);
                 if(right) {
                     counter++;
@@ -218,7 +215,7 @@ public class Board {
      * @param rowcount true if you want to check on the rows false if you want to check on columns
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
-    private boolean verzinnaam(int row, int col, StoneColour stone, boolean positive, boolean rowcount) {
+    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean positive, boolean rowcount) {
         int next;
         if (positive) {
             next = 1;
@@ -235,7 +232,7 @@ public class Board {
                 return true;
 
             } else {
-                return(verzinnaam(row + next, col, stone, positive, rowcount));
+                return(checkerSideAreCaptured(row + next, col, stone, positive, rowcount));
             }
 
         }
@@ -247,7 +244,7 @@ public class Board {
             } else if (getField(row, col + 1) != StoneColour.EMPTY && getField(row, col + 1) != stone) {
                 return true;
             } else {
-                return(verzinnaam(row, col + 1, stone, positive, rowcount));
+                return(checkerSideAreCaptured(row, col + 1, stone, positive, rowcount));
             }
 
         }
