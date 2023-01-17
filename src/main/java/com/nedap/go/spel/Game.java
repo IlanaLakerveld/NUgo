@@ -46,8 +46,14 @@ public class Game {
      * A legal move is can only be on an empty space inside the board and may not recreate a previous board.
      * @return true if the move is a legal move
      */
-    public boolean isValidMove(){
-        return false;
+    public boolean isValidMove(Move move){
+        if(!board.isField(move.getRow(),move.getCol())){
+            return false;
+        }
+        if(!board.isEmptyField(move.getRow(),move.getCol())){
+            return false ;
+        }
+        return true;
     }
 
     /**
@@ -55,7 +61,45 @@ public class Game {
      * @param move the move you want to make
      */
     protected void doMove(Move move){
-        board.setField(move.getRow(),move.getCol(),move.getColour());
+        int row = move.getRow() ;
+        int col = move.getCol() ;
+        board.setField(row,col,move.getColour());
+       if (board.isSurrounded(row+1,col)){
+           List<int[]> capturedValues = board.caputured(row + 1, col);
+           for(int i = 0 ; i< capturedValues.size(); i++){
+               removeStone(capturedValues.get(i)[0],capturedValues.get(i)[1]) ;
+           }
+       }
+       if(board.isSurrounded(row-1,col)){
+           List<int[]> capturedValues = board.caputured(row -1, col);
+           for(int i = 0 ; i< capturedValues.size(); i++){
+               removeStone(capturedValues.get(i)[0],capturedValues.get(i)[1]) ;
+           }
+
+       }
+        if(board.isSurrounded(row,col+1)){
+            List<int[]> capturedValues = board.caputured(row, col+1 );
+            for(int i = 0 ; i< capturedValues.size(); i++){
+                removeStone(capturedValues.get(i)[0],capturedValues.get(i)[1]) ;
+            }
+
+        }
+        if(board.isSurrounded(row,col-1)){
+            List<int[]> capturedValues = board.caputured(row, col-1);
+            for(int i = 0 ; i< capturedValues.size(); i++){
+                removeStone(capturedValues.get(i)[0],capturedValues.get(i)[1]) ;
+            }
+
+        }
+        // This one should be last because enemy capture is first
+        if(board.isSurrounded(row,col)){
+            List<int[]> capturedValues = board.caputured(row , col);
+            for(int i = 0 ; i< capturedValues.size(); i++){
+                removeStone(capturedValues.get(i)[0],capturedValues.get(i)[1]) ;
+            }
+
+        }
+        listPreviousBoardStates.add(board.CopyBoard());
     }
 
     /**
@@ -69,6 +113,11 @@ public class Game {
 
     public List<Board> getListPreviousBoardStates() {
         return listPreviousBoardStates;
+    }
+
+    private void removeStone(int row, int col){
+        board.setField(row,col,StoneColour.EMPTY);
+
     }
 
 }
