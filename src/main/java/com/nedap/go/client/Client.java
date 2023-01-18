@@ -1,7 +1,7 @@
 package com.nedap.go.client;
 
 
-public class Client {
+public class Client implements Runnable {
 
 
     private static final String WELCOME = "WELCOME";
@@ -12,6 +12,11 @@ public class Client {
     private static final String GAMEOVER = "GAMEOVER";
 
 
+    /**
+     * Runs this operation.
+     */
+    @Override
+    public void run() {
 
-
+    }
 }

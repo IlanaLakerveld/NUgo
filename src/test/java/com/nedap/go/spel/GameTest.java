@@ -54,6 +54,22 @@ public class GameTest {
 
 
         // Make a move that result in a recreation of the previous state
+        game.board.setField(1,1,StoneColour.WHITE);
+        game.board.setField(0,2,StoneColour.WHITE);
+        game.board.setField(2,2,StoneColour.WHITE);
+        game.getListPreviousBoardStates().add(game.board.CopyBoard());
+        game.board.setField(1,2,StoneColour.BLACK);
+        game.board.setField(0,3,StoneColour.BLACK);
+        game.board.setField(2,3,StoneColour.BLACK);
+        game.board.setField(1,4,StoneColour.BLACK);
+        game.getListPreviousBoardStates().add(game.board.CopyBoard());
+        move= new Move(1,3,StoneColour.WHITE);
+        assertTrue(game.isValidMove(move));
+        game.doMove(move);
+        move = new Move(1,2,StoneColour.BLACK);
+        assertFalse(game.isValidMove(move));
+
+
     }
 
 }

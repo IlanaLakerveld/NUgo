@@ -1,6 +1,6 @@
 package com.nedap.go.spel;
 
-public abstract class AbstractPlayer {
+public class AbstractPlayer {
 
 
     private final String name;

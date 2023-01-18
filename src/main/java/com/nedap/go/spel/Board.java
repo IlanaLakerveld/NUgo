@@ -139,7 +139,7 @@ public class Board {
             return null ;
         }
         // check all directions
-        list.add(new int[]{2, 2});
+        list.add(new int[]{row, col});
         list.addAll(extracted(row, col,true));
         list.addAll(extracted(row,col,false));
         list.addAll(extractedcol(row,col,false));
@@ -239,9 +239,9 @@ public class Board {
         else  { //(!rowcount)
             if (!isField(row, col + 1)) {
                 return true;
-            } else if (getField(row, col + 1) == StoneColour.EMPTY) {
+            } else if (getField(row, col + next) == StoneColour.EMPTY) {
                 return false;
-            } else if (getField(row, col + 1) != StoneColour.EMPTY && getField(row, col + 1) != stone) {
+            } else if (getField(row, col + next) != StoneColour.EMPTY && getField(row, col + next) != stone) {
                 return true;
             } else {
                 return(checkerSideAreCaptured(row, col + 1, stone, positive, rowcount));
@@ -251,6 +251,7 @@ public class Board {
 
 
     }
+
 
 
 

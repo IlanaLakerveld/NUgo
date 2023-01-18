@@ -12,6 +12,8 @@ public class ClientHandler implements Runnable{
     private PrintWriter pW ;
     private BufferedReader bR ;
 
+    private String username ;
+
 
     private static final String HELLO = "HELLO";
     private static final String USERNAME = "USERNAME";
