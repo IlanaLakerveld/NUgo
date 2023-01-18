@@ -2,7 +2,7 @@ package com.nedap.go;
 
 import com.nedap.go.spel.Board;
 
-public class BoardCompare {
+public final class BoardCompare {
     /**
      * Check if the board are the same
      * @param board1 first board
