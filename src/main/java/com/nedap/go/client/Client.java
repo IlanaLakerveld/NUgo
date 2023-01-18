@@ -26,12 +26,6 @@ public class Client implements Runnable {
      */
     @Override
     public void run() {
-//        String line;
-//        line = bR.readLine();
-//
-//        String[] splittedLine = line.split("~");
-//        String command = splittedLine[0].toUpperCase();
-//        switch (command) {
 
     }
     public void close(){}

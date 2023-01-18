@@ -22,7 +22,11 @@ public class ClientHandler implements Runnable {
     private static final String MOVE = "MOVE";
     private static final String QUIT = "QUIT";
 
-
+    /**
+     * constructor
+     * @param socket
+     * @param server
+     */
     public ClientHandler(Socket socket, Server server) {
         this.socket = socket;
         this.server = server;
@@ -37,6 +41,11 @@ public class ClientHandler implements Runnable {
 
     /**
      * Runs this operation.
+     * Reads the input and depending on this input with the switch command goes to the right output
+     *
+     * hier mist nog een boolean die ervoor zorgt dat je in bepaalde situaties dingen niet kan (zoals een spel proberen te starten als je nog geen username is gegeven)
+     * De functies die dezelfde naam hebben als de input zijn nog niet af en of niet correct
+     *
      */
     @Override
     public void run() {
@@ -115,7 +124,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void pass(){
-        // hier iets wat doorstuurd naar het spell
+        // hier iets wat doorstuurd naar het spel
         String s = myUsername + "~" + "pass" ;
         server.messageSender(s); // send message to all the clients in the game .
     }

@@ -2,14 +2,19 @@ package com.nedap.go.server;
 
 import com.nedap.go.spel.*;
 
-public class GamePlay {
+public class GameGo {
     private AbstractPlayer playerBlack ;
     private AbstractPlayer playerWhite ;
     private AbstractPlayer currentPlayer ;
 
     private Game game ;
 
-    public GamePlay(AbstractPlayer player1 ,AbstractPlayer player2 ) {
+    /**
+     * Constructor
+     * @param player1 (zit een ch i
+     * @param player2
+     */
+    public GameGo(AbstractPlayer player1 , AbstractPlayer player2 ) {
         playerBlack=player1;
         playerWhite=player2;
 
@@ -21,8 +26,12 @@ public class GamePlay {
         currentPlayer=playerBlack; // player 1 ( Black ) always starts
         boolean gameStop = false ;
         while(!gameStop){
-
-
+            // Hier komt het daadwerkelijk spel met funties uit Game
+            // Dit gaat er ongeveer zo uitzien
+            //  De speler die aan de beurt is ee zet mag doen
+            // Een check of dit mag en of spel niet over is
+            // verteld iederen welke zet er word gedaan
+            // zet de zet op het bord
 
             if(game.isGameover()){
                 gameStop= true ;

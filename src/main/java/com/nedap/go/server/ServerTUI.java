@@ -5,7 +5,7 @@ import com.nedap.go.getPortInput;
 import java.util.Scanner;
 
 /**
- * This is the TUI for the server. To start the server run main.
+ * This is the TUI for the server. To start the server run main. To stop, type quit
  */
 public class ServerTUI {
     static Scanner scanner = new Scanner(System.in);
