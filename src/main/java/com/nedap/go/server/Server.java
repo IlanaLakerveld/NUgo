@@ -80,12 +80,14 @@ public class Server implements Runnable {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Can not close the serversocket");
+//            throw new RuntimeException(e);
         }
         try {
             socketThread.join();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println("can not join the socket thread");
+//            throw new RuntimeException(e);
         }
         active = false;
     }
@@ -130,7 +132,10 @@ public class Server implements Runnable {
     }
 
 
-    public void addToPlayerQueue(ClientHandler cl){
+    public void addOrRemovePlayerFromQueue(ClientHandler cl){
+        if(playerQueue.contains(cl.getMyUsername())){
+            playerQueue.remove(cl.getMyUsername());
+        }
         playerQueue.add(cl) ;
     }
 

@@ -6,10 +6,10 @@ public final class getPortInput {
     static Scanner scanner = new Scanner(System.in);
 
     public static int getPort(Boolean clientSide) {
-        boolean correctPortInterter = false;
+        boolean correctPortInterger = false;
         int port = -1;
-        while (!correctPortInterter) {
-            System.out.println("Import a port number, between 1 and 65535. Import 0 for a random available port.");
+        while (!correctPortInterger) {
+            System.out.println("Import a port number, between 1 and 65535. Import 0 only allowed for the server.");
             String number = scanner.nextLine();
 
             try {
@@ -21,16 +21,16 @@ public final class getPortInput {
             }
             if (clientSide) {
                 if (port < 1 || port > 65535) {
-                    System.out.println("Port number should be between 1 and 65535 or 0 for a random available port.");
+                    System.out.println("Port number should be between 1 and 65535. Import 0 only allowed for the server.");
 
                 } else {
-                    correctPortInterter = true;
+                    correctPortInterger = true;
                 }
             } else {
                 if (port < 0 || port > 65535) {
                     System.out.println("Port number should be between 1 and 65535 or 0 for a random available port.");
                 } else {
-                    correctPortInterter = true;
+                    correctPortInterger = true;
                 }
 
             }

@@ -6,8 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,7 +13,7 @@ public class BoardTest {
     private Board board;
 
 
-    @Before // is zelfde als before each
+    @Before // same as before each
     public void setUp() {
         board = new Board();
     }
@@ -60,7 +58,7 @@ public class BoardTest {
             }
         }
 
-//        // Check if a field in the deepcopied board the original remains the same
+//        // Check if a field in the deep copied board the original remains the same
         deepCopyBoard.setField(1, 1, StoneColour.BLACK);
         assertEquals(StoneColour.EMPTY, board.getField(1, 1));
         assertEquals(StoneColour.BLACK, deepCopyBoard.getField(1, 1));
@@ -82,7 +80,7 @@ public class BoardTest {
 
     @Test
     public void testIsSurroundedCorner() {
-        // first check for the a corner
+        // first check for the corner
         board.setField(0, 0, StoneColour.BLACK);
         board.setField(0, 1, StoneColour.WHITE);
 
@@ -161,7 +159,7 @@ public class BoardTest {
         board.setField(3, 3, StoneColour.BLACK);
         board.setField(2, 4, StoneColour.BLACK);
 
-        List<int[]> list = new ArrayList<int[]>();
+        List<int[]> list  ;
         list = board.caputured(2, 2);
         int[] answer = new int[]{2, 2, 2, 3};
 

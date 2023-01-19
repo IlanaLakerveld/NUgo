@@ -32,7 +32,7 @@ public class Game {
      *
      * @return true if the game should if ended
      */
-    public boolean isGameover() {
+    public boolean isGameOver() {
 
         //if board is full the game is over
         if (board.isFull()) {
@@ -66,7 +66,7 @@ public class Game {
         // check if board position is not already been done in the game
         if (listPreviousBoardStates.size() > 0) {
             Board copyBoard = board.CopyBoard();
-            extracted(move, copyBoard);
+            changeOnboardDoneByMove(move, copyBoard);
             for (Board listPreviousBoardState : listPreviousBoardStates) {
                 // if two board are equal then false
                 if (BoardCompare.boardCompare(listPreviousBoardState, copyBoard)) {
@@ -84,19 +84,19 @@ public class Game {
      * @param move the move you want to make. Add a copy of the board because the board can change .
      */
     protected void doMove(Move move) {
-        extracted(move, board);
+        changeOnboardDoneByMove(move, board);
         listPreviousBoardStates.add(board.CopyBoard());
     }
 
 
-    private void extracted(Move move, Board board) {
+    private void changeOnboardDoneByMove(Move move, Board board) {
         int row = move.getRow();
         int col = move.getCol();
         board.setField(row, col, move.getColour());
         if (board.isField(row + 1, col) && board.isSurrounded(row + 1, col)) {
             List<int[]> capturedValues = board.caputured(row + 1, col);
-            for (int i = 0; i < capturedValues.size(); i++) {
-                removeStone(capturedValues.get(i)[0], capturedValues.get(i)[1], board);
+            for (int[] capturedValue : capturedValues) {
+                removeStone(capturedValue[0], capturedValue[1], board);
             }
         }
         if (board.isField(row - 1, col) && board.isSurrounded(row - 1, col)) {
@@ -135,7 +135,16 @@ public class Game {
      * @return the colour of the winner
      */
     public StoneColour isWinner() {
-        return StoneColour.EMPTY;
+        Map<StoneColour, Integer> score = getScore();
+        if(score.get(StoneColour.WHITE)>score.get(StoneColour.BLACK)){
+            return StoneColour.WHITE ;
+        }
+        else if(score.get(StoneColour.WHITE)<score.get(StoneColour.BLACK)){
+            return StoneColour.BLACK;
+        }
+        else {
+            return StoneColour.EMPTY;
+        }
     }
 
 

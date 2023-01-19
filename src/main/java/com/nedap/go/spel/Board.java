@@ -125,13 +125,20 @@ public class Board {
      */
     public boolean isSurrounded(int row, int col) {
         StoneColour stone = getField(row, col);
-        if (checkerSideAreCaptured(row, col, stone, true, true) && checkerSideAreCaptured(row, col, stone, true, false) && checkerSideAreCaptured(row, col, stone, false, true) && checkerSideAreCaptured(row, col, stone, false, false)) {
+        // check al the neighbours of the stone
+        if (checkerSideAreCaptured(row+1, col, stone, true, true,false) && checkerSideAreCaptured(row-1, col, stone, true, false,false) && checkerSideAreCaptured(row, col+1, stone, false, false,true) && checkerSideAreCaptured(row, col-1, stone, false, false,false)) {
             return true;
         }
         return false;
 
     }
 
+    /**
+     * Creates a list of arrays(row,col) that are fields that are captured
+     * @param row row of the stone that is caputured/surrounded
+     * @param col column of the stone that is captured/surrounded
+     * @return list of arrays(row,col) that are surrounded.
+     */
     public List<int[]> caputured(int row, int col) {
         List<int[]> list= new ArrayList<int[]>();
         // check if is actually surrounded
@@ -173,6 +180,7 @@ public class Board {
                 sameColour=false ;
             }
         }
+
         return list ;
     }
 
@@ -205,53 +213,48 @@ public class Board {
     }
 
 
-    /**
-     * check if the on one side if "captured"
+
+
+
+    /**  check if the on one side if "captured"
      *
-     * @param row row
-     * @param col column
-     * @param stone    stone colour of this stone .
-     * @param positive true if you want to look at the upper of right side false if you want to check on the right side
-     * @param rowcount true if you want to check on the rows false if you want to check on columns
+     * @param row row of the field you want to check
+     * @param col col of the field you want to check
+     * @param stone sstone colour of this stone
+     * @param horizontal true is you want to check of the rows, false if you want to check the columns
+     * @param rightSide true if you want to check the right side, false is you want to check the left side
+     * @param down true is you want to check the colums false is you want to check the rows
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
-    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean positive, boolean rowcount) {
-        int next;
-        if (positive) {
-            next = 1;
-        } else {
-            next = -1;
-        }
+    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down) {
 
-        if (rowcount) {
-            if (!isField(row + next,col)) {
-                return true;
-            } else if (getField(row + next, col) == StoneColour.EMPTY) {
-                return false;
-            } else if (getField(row + next, col) != StoneColour.EMPTY && getField(row + next, col) != stone) {
-                return true;
-
-            } else {
-                return(checkerSideAreCaptured(row + next, col, stone, positive, rowcount));
+            if (!isField(row ,col)) {
+              return true;
             }
-
-        }
-        else  { //(!rowcount)
-            if (!isField(row, col + 1)) {
-                return true;
-            } else if (getField(row, col + next) == StoneColour.EMPTY) {
+            else if (getField(row, col) == StoneColour.EMPTY) {
                 return false;
-            } else if (getField(row, col + next) != StoneColour.EMPTY && getField(row, col + next) != stone) {
-                return true;
-            } else {
-                return(checkerSideAreCaptured(row, col + 1, stone, positive, rowcount));
             }
-
-        }
-
-
+            else if (getField(row , col) != StoneColour.EMPTY && getField(row , col) != stone) {
+                return true;
+            }
+            else {
+                if(horizontal){
+                    if(rightSide){
+                        return checkerSideAreCaptured(row+1,col,stone,true,true, false) ;
+                    }
+                    else{
+                        return checkerSideAreCaptured(row-1,col,stone,true,false,false);
+                    }
+                }
+                else{
+                    if (down) {
+                        return checkerSideAreCaptured(row, col + 1, stone,false,  false, true);
+                    } else {
+                        return checkerSideAreCaptured(row, col - 1, stone,false,  false, false);
+                    }
+                }
+            }
     }
-
 
 
 

@@ -24,6 +24,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * constructor
+     *
      * @param socket
      * @param server
      */
@@ -42,10 +43,9 @@ public class ClientHandler implements Runnable {
     /**
      * Runs this operation.
      * Reads the input and depending on this input with the switch command goes to the right output
-     *
+     * <p>
      * hier mist nog een boolean die ervoor zorgt dat je in bepaalde situaties dingen niet kan (zoals een spel proberen te starten als je nog geen username is gegeven)
      * De functies die dezelfde naam hebben als de input zijn nog niet af en of niet correct
-     *
      */
     @Override
     public void run() {
@@ -53,45 +53,52 @@ public class ClientHandler implements Runnable {
 
             try {
                 String line;
-                line = bR.readLine();
 
+                line = bR.readLine();
+                if (line == null) {
+                    break;
+                }
                 String[] splittedLine = line.split("~");
                 String command = splittedLine[0].toUpperCase();
                 switch (command) {
                     case HELLO:
                         hello();
-                        break ;
+                        break;
                     case USERNAME:
                         username(splittedLine[1]);
-                        break ;
+                        break;
                     case QUEUE:
                         queue();
-                        break ;
+                        break;
                     case PASS:
-                        pass() ;
-                        break ;
+                        pass();
+                        break;
                     case MOVE:
-                        move(Integer.parseInt(splittedLine[1]),Integer.parseInt(splittedLine[2])) ;
-                        break ;
+                        move(Integer.parseInt(splittedLine[1]), Integer.parseInt(splittedLine[2]));
+                        break;
                     case QUIT:
                         quit();
-                        break ;
+                        break;
                     default:
                         System.out.println("Does not understand the import");
                 }
+
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("Connection with a client is lost");
+                break;
             }
         }
 
-
+        close();
     }
 
 
     public void close() {
         try {
-            socket.close();
+//
             bR.close();
+            server.usernames.remove(myUsername);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -100,47 +107,52 @@ public class ClientHandler implements Runnable {
 
 
     private void queue() {
-        server.addToPlayerQueue(this);
+        System.out.println("test of hier komt queue");
+        server.addOrRemovePlayerFromQueue(this);
 
     }
 
-    private void username(String username){
-        if(!server.usernames.contains(username)) {
+    private void username(String username) {
+        System.out.println("test functie komt bij username ");
+        if (!server.usernames.contains(username)) {
             this.myUsername = username;
-            server.usernames.add(username) ;
+            server.usernames.add(username);
             pW.println("JOINED");
             pW.flush();
-        }
-        else{
-            pW.println("USERNAMETAKEN");
+        } else {
+            pW.println("USERNAMETAKEN~username is already taken please use another username");
             pW.flush();
         }
 
     }
 
-    private void hello(){
+    private void hello() {
         pW.println("WELCOME~This is the server van Ilana");
         pW.flush();
     }
 
-    private void pass(){
+    private void pass() {
         // hier iets wat doorstuurd naar het spel
-        String s = myUsername + "~" + "pass" ;
-        server.messageSender(s); // send message to all the clients in the game .
+        String s = myUsername + "~" + "pass";
     }
-    private void move(int row, int col){
-        // hier moet nog wel iets dat die daadwerkelijk leest
-        String s = ""+row+"~"+col ;
-        server.messageSender(s);
+
+    private void move(int row, int col) {
+
+        String s = "" + row + "~" + col;
+
     }
-    private void quit(){
-        close() ;
+
+    private void quit() {
+        close();
     }
 
 
-    public void sendMessage(String message){
+    public void sendMessage(String message) {
         pW.println(message);
         pW.flush();
     }
 
+    public String getMyUsername() {
+        return myUsername;
+    }
 }

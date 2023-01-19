@@ -11,7 +11,7 @@ public class GameGo {
 
     /**
      * Constructor
-     * @param player1 (zit een ch i
+     * @param player1
      * @param player2
      */
     public GameGo(AbstractPlayer player1 , AbstractPlayer player2 ) {
@@ -33,7 +33,7 @@ public class GameGo {
             // verteld iederen welke zet er word gedaan
             // zet de zet op het bord
 
-            if(game.isGameover()){
+            if(game.isGameOver()){
                 gameStop= true ;
             }
 

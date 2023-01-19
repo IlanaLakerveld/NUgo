@@ -26,18 +26,18 @@ public class GameTest {
         game.getListPreviousBoardStates().add(null);
         game.getListPreviousBoardStates().add(game.board.CopyBoard());
         game.getListPreviousBoardStates().add(null);
-        assertFalse(game.isGameover());
+        assertFalse(game.isGameOver());
         game.getListPreviousBoardStates().add(null);
-        assertTrue(game.isGameover());
+        assertTrue(game.isGameOver());
         game.getListPreviousBoardStates().clear();
-        assertFalse(game.isGameover());
+        assertFalse(game.isGameOver());
         //test of the game is over when the board is full
         for(int i=0 ; i<game.board.DIM ; i++){
             for(int j=0 ; j<game.board.DIM ; j++){
                 game.board.setField(i,j,StoneColour.BLACK);
             }
         }
-        assertTrue(game.isGameover());
+        assertTrue(game.isGameOver());
 
     }
 
@@ -75,7 +75,7 @@ public class GameTest {
     }
 
     @Test
-   public void getScoreTest(){
+   public void getScoreTestANDisWInnerTest(){
         // To test is the if the points are correctly count I use the example of https://en.wikipedia.org/wiki/Rules_of_Go#Area_scoring
         game.board.setField(0,2,StoneColour.BLACK);
         game.board.setField(0,3,StoneColour.BLACK);
@@ -132,6 +132,26 @@ public class GameTest {
         // 44 and 36 are the results as calculated in https://en.wikipedia.org/wiki/Rules_of_Go#Area_scoring
         assertEquals(score.get(StoneColour.BLACK)  ,44,0.0);
         assertEquals(score.get(StoneColour.WHITE),36,0.0);
+        assertEquals(game.isWinner(),StoneColour.BLACK);
+
+
+    }
+
+    @Test
+    public void doMoveTest(){
+        Move move = new Move(0,0,StoneColour.BLACK);
+        game.doMove(move);
+        assertEquals(game.board.getField(0,0) ,StoneColour.BLACK);
+        move = new Move(0,1,StoneColour.WHITE);
+        game.doMove(move);
+        move = new Move(1,0,StoneColour.WHITE);
+        game.doMove(move);
+        assertEquals(game.board.getField(0,1) ,StoneColour.WHITE);
+        assertEquals(game.board.getField(1,0) ,StoneColour.WHITE);
+        // this stone should be removed because it captured
+        assertEquals(game.board.getField(0,0) ,StoneColour.EMPTY);
+        // there are 3 moves done in this game so the list should be of size 3
+        assertEquals(game.getListPreviousBoardStates().size(),3,0.0);
 
 
 
