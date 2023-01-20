@@ -1,5 +1,6 @@
 package com.nedap.go.spel;
 
+import com.nedap.go.gui.GoGuiIntegrator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class BoardTest {
     private Board board;
+
 
 
     @Before // same as before each
@@ -141,11 +143,13 @@ public class BoardTest {
         board.setField(3, 2, StoneColour.BLACK);
         board.setField(2, 1, StoneColour.BLACK);
         board.setField(1, 1, StoneColour.BLACK);
-        assertTrue(board.isSurrounded(2, 2));
 
+        assertTrue(board.isSurrounded(2, 2));
+        assertFalse(board.isSurrounded(2, 2));
 
         board.setField(2, 3, StoneColour.EMPTY);
         assertFalse(board.isSurrounded(2, 2));
+
 
     }
 

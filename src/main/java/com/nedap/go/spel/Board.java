@@ -56,7 +56,6 @@ public class Board {
 
 
     /**
-     *
      * @param row row
      * @param col column
      * @return true is the field is part of the board
@@ -69,7 +68,6 @@ public class Board {
         }
         return false;
     }
-
 
 
     /**
@@ -109,8 +107,8 @@ public class Board {
     /**
      * set stone on the board
      *
-     * @param row row
-     * @param col colum
+     * @param row   row
+     * @param col   colum
      * @param stone Either black or white depending on the player
      */
     protected void setField(int row, int col, StoneColour stone) {
@@ -126,7 +124,7 @@ public class Board {
     public boolean isSurrounded(int row, int col) {
         StoneColour stone = getField(row, col);
         // check al the neighbours of the stone
-        if (checkerSideAreCaptured(row+1, col, stone, true, true,false) && checkerSideAreCaptured(row-1, col, stone, true, false,false) && checkerSideAreCaptured(row, col+1, stone, false, false,true) && checkerSideAreCaptured(row, col-1, stone, false, false,false)) {
+        if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
             return true;
         }
         return false;
@@ -135,125 +133,132 @@ public class Board {
 
     /**
      * Creates a list of arrays(row,col) that are fields that are captured
+     *
      * @param row row of the stone that is caputured/surrounded
      * @param col column of the stone that is captured/surrounded
      * @return list of arrays(row,col) that are surrounded.
      */
     public List<int[]> caputured(int row, int col) {
-        List<int[]> list= new ArrayList<int[]>();
+        List<int[]> list = new ArrayList<int[]>();
         // check if is actually surrounded
-        if(!isSurrounded(row,col)){
-            return null ;
+        if (!isSurrounded(row, col)) {
+            return null;
         }
         // check all directions
         list.add(new int[]{row, col});
-        list.addAll(extracted(row, col,true));
-        list.addAll(extracted(row,col,false));
-        list.addAll(extractedcol(row,col,false));
-        list.addAll(extractedcol(row,col,true));
+        list.addAll(extracted(row, col, true));
+        list.addAll(extracted(row, col, false));
+        list.addAll(extractedcol(row, col, false));
+        list.addAll(extractedcol(row, col, true));
 
         return list;
     }
 
-    private List<int[]> extractedcol(int row, int col, Boolean up){
-        List<int[]> list= new ArrayList<int[]>();
+    private List<int[]> extractedcol(int row, int col, Boolean up) {
+        List<int[]> list = new ArrayList<int[]>();
         boolean sameColour = true;
-        int counter ;
-        if (up){
-            counter= 1 ;
-        }
-        else{
-            counter = -1 ;
-        }
-        while(sameColour){
-            if(isField(row,col+counter)&& getField(row,col)==getField(row,col+counter)){
-                int[] thisField = new int[]{row,col+counter} ;
-                list.add(0,thisField);
-                if(up){
-                    counter++ ;
-                }
-                else{
-                    counter-- ;
-                }
-            }
-            else{
-                sameColour=false ;
-            }
-        }
-
-        return list ;
-    }
-
-    private List<int[]>  extracted(int row, int col, Boolean right) {
-        List<int[]> list= new ArrayList<int[]>();
-        boolean sameColour =true;
-        int counter ;
-        if(right){
+        int counter;
+        if (up) {
             counter = 1;
+        } else {
+            counter = -1;
         }
-        else{
-            counter = -1 ;
-        }
-        while(sameColour){
-            if(isField(row +counter, col) && getField(row, col) == getField(row +counter, col)){
-                int[] thisField = new int[]{row +counter,col} ;
-                list.add(0,thisField);
-                if(right) {
+        while (sameColour) {
+            if (isField(row, col + counter) && getField(row, col) == getField(row, col + counter)) {
+                int[] thisField = new int[]{row, col + counter};
+                list.add(0, thisField);
+                if (up) {
                     counter++;
-                }
-                else{
+                } else {
                     counter--;
                 }
-            }
-            else{
-                sameColour=false ;
+            } else {
+                sameColour = false;
             }
         }
-        return list ;
+
+        return list;
+    }
+
+    private List<int[]> extracted(int row, int col, Boolean right) {
+        List<int[]> list = new ArrayList<int[]>();
+        boolean sameColour = true;
+        int counter;
+        if (right) {
+            counter = 1;
+        } else {
+            counter = -1;
+        }
+        while (sameColour) {
+            if (isField(row + counter, col) && getField(row, col) == getField(row + counter, col)) {
+                int[] thisField = new int[]{row + counter, col};
+                list.add(0, thisField);
+                if (right) {
+                    counter++;
+                } else {
+                    counter--;
+                }
+            } else {
+                sameColour = false;
+            }
+        }
+        return list;
     }
 
 
-
-
-
-    /**  check if the on one side if "captured"
+    /**
+     * check if the on one side if "captured"
      *
-     * @param row row of the field you want to check
-     * @param col col of the field you want to check
-     * @param stone sstone colour of this stone
+     * @param row        row of the field you want to check
+     * @param col        col of the field you want to check
+     * @param stone      sstone colour of this stone
      * @param horizontal true is you want to check of the rows, false if you want to check the columns
-     * @param rightSide true if you want to check the right side, false is you want to check the left side
-     * @param down true is you want to check the colums false is you want to check the rows
+     * @param rightSide  true if you want to check the right side, false is you want to check the left side
+     * @param down       true is you want to check the field below true is you want to check the field up
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
     private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down) {
 
-            if (!isField(row ,col)) {
-              return true;
-            }
-            else if (getField(row, col) == StoneColour.EMPTY) {
-                return false;
-            }
-            else if (getField(row , col) != StoneColour.EMPTY && getField(row , col) != stone) {
-                return true;
-            }
-            else {
-                if(horizontal){
-                    if(rightSide){
-                        return checkerSideAreCaptured(row+1,col,stone,true,true, false) ;
-                    }
-                    else{
-                        return checkerSideAreCaptured(row-1,col,stone,true,false,false);
-                    }
-                }
-                else{
-                    if (down) {
-                        return checkerSideAreCaptured(row, col + 1, stone,false,  false, true);
+        if (!isField(row, col)) {
+            return true;
+        } else if (getField(row, col) == StoneColour.EMPTY) {
+            return false;
+        } else if (getField(row, col) != StoneColour.EMPTY && getField(row, col) != stone) {
+            return true;
+        } else {
+
+            if (horizontal) {
+                if (rightSide) {
+
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row , col+1, stone, false, false, true) && checkerSideAreCaptured(row , col-1, stone, false, false, false)) {
+                        return true;
                     } else {
-                        return checkerSideAreCaptured(row, col - 1, stone,false,  false, false);
+                        return false;
+                    }
+
+                } else {
+                    if (checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row , col+1, stone, false, false, true) && checkerSideAreCaptured(row , col-1, stone, false, false, false)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            } else {
+                if (down) {
+                    if (checkerSideAreCaptured(row + 1, col ,stone, true, true, false) && checkerSideAreCaptured(row-1, col , stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (checkerSideAreCaptured(row+ 1, col , stone, true, true, false) && checkerSideAreCaptured(row-1, col , stone, true, false, false) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
+                        return true;
+                    } else {
+                        return false;
                     }
                 }
             }
+        }
     }
 
 
