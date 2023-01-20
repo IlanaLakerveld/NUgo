@@ -145,7 +145,7 @@ public class BoardTest {
         board.setField(1, 1, StoneColour.BLACK);
 
         assertTrue(board.isSurrounded(2, 2));
-        assertFalse(board.isSurrounded(2, 2));
+
 
         board.setField(2, 3, StoneColour.EMPTY);
         assertFalse(board.isSurrounded(2, 2));
@@ -157,20 +157,30 @@ public class BoardTest {
     public void testCaptured() {
         board.setField(2, 2, StoneColour.WHITE);
         board.setField(2, 3, StoneColour.WHITE);
+        board.setField(2, 4, StoneColour.WHITE);
+        board.setField(3, 2, StoneColour.WHITE);
+
+
         board.setField(2, 1, StoneColour.BLACK);
+        board.setField(3, 1, StoneColour.BLACK);
+
         board.setField(1, 2, StoneColour.BLACK);
-        board.setField(3, 2, StoneColour.BLACK);
+        board.setField(1, 3, StoneColour.BLACK);
+        board.setField(1, 4, StoneColour.BLACK);
+        board.setField(2, 5, StoneColour.BLACK);
+
         board.setField(3, 3, StoneColour.BLACK);
-        board.setField(2, 4, StoneColour.BLACK);
+        board.setField(3, 4, StoneColour.BLACK);
+        board.setField(4, 2, StoneColour.BLACK);
+
+
 
         List<int[]> list  ;
-        list = board.caputured(2, 2);
-        int[] answer = new int[]{2, 2, 2, 3};
+        list = board.caputured(2, 3);
 
-        assertEquals(list.get(0)[0], answer[0]);
-        assertEquals(list.get(0)[1], answer[1]);
-        assertEquals(list.get(1)[0], answer[2]);
-        assertEquals(list.get(1)[1], answer[3]);
+
+        assertEquals(list.size(),4,0.0);
+
 
 
     }

@@ -1,6 +1,7 @@
 package com.nedap.go.spel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Board {
@@ -144,66 +145,43 @@ public class Board {
         if (!isSurrounded(row, col)) {
             return null;
         }
+
+        StoneColour colour = getField(row,col);
         // check all directions
         list.add(new int[]{row, col});
-        list.addAll(extracted(row, col, true));
-        list.addAll(extracted(row, col, false));
-        list.addAll(extractedcol(row, col, false));
-        list.addAll(extractedcol(row, col, true));
 
-        return list;
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row+1,col,colour,""+row+col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row-1,col,colour,""+row+col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row,col+1,colour,""+row+col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row,col-1,colour,""+row+col));
+        List<int[]> listWithoutDuplicates = new ArrayList<>(new HashSet<>(list));
+
+
+       return list;
     }
 
-    private List<int[]> extractedcol(int row, int col, Boolean up) {
+    private List<int[]>listOfFieldThatNeedsToBeRemoved(int row,int col,StoneColour colour,String startPosition){
         List<int[]> list = new ArrayList<int[]>();
-        boolean sameColour = true;
-        int counter;
-        if (up) {
-            counter = 1;
-        } else {
-            counter = -1;
+        if(!isField(row,col)||getField(row,col)!=colour) {
+            return list;
         }
-        while (sameColour) {
-            if (isField(row, col + counter) && getField(row, col) == getField(row, col + counter)) {
-                int[] thisField = new int[]{row, col + counter};
-                list.add(0, thisField);
-                if (up) {
-                    counter++;
-                } else {
-                    counter--;
-                }
-            } else {
-                sameColour = false;
-            }
+        list.add(new int[]{row, col});
+        if(!startPosition.equals(""+(row+1)+col)) {
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, "" + row + col));
         }
-
-        return list;
+        if(!startPosition.equals(""+(row-1)+col)) {
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, "" + row + col));
+        }
+        if(!startPosition.equals(""+row+(col+1))) {
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, "" + row + col));
+        }
+        if(!startPosition.equals(""+row+(col-1))) {
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, "" + row + col));
+        }
+        return list ;
     }
 
-    private List<int[]> extracted(int row, int col, Boolean right) {
-        List<int[]> list = new ArrayList<int[]>();
-        boolean sameColour = true;
-        int counter;
-        if (right) {
-            counter = 1;
-        } else {
-            counter = -1;
-        }
-        while (sameColour) {
-            if (isField(row + counter, col) && getField(row, col) == getField(row + counter, col)) {
-                int[] thisField = new int[]{row + counter, col};
-                list.add(0, thisField);
-                if (right) {
-                    counter++;
-                } else {
-                    counter--;
-                }
-            } else {
-                sameColour = false;
-            }
-        }
-        return list;
-    }
+
 
 
     /**
