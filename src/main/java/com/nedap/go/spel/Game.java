@@ -83,24 +83,40 @@ public class Game {
      *
      * @param move the move you want to make. Add a copy of the board because the board can change .
      */
-    protected void doMove(Move move) {
-        changeOnboardDoneByMove(move, board);
-        listPreviousBoardStates.add(board.CopyBoard());
+    public void doMove(Move move) {
+        if(move == null){
+            listPreviousBoardStates.add(null);
+        }
+        else {
+            changeOnboardDoneByMove(move, board);
+
+            listPreviousBoardStates.add(board.CopyBoard());
+        }
+    }
+
+    public List<int[]> changesForGUI(Move move){
+        Board copyBoard = board.CopyBoard();
+        List<int[]> ints = changeOnboardDoneByMove(move, copyBoard);
+        return ints ;
     }
 
 
-    private void changeOnboardDoneByMove(Move move, Board board) {
+    private List<int[]> changeOnboardDoneByMove(Move move, Board board) {
         int row = move.getRow();
         int col = move.getCol();
+        List<int[]> alRemovedValues = new ArrayList<>();
         board.setField(row, col, move.getColour());
         if (board.isField(row + 1, col) && board.isSurrounded(row + 1, col)) {
             List<int[]> capturedValues = board.caputured(row + 1, col);
+            alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
+
             }
         }
         if (board.isField(row - 1, col) && board.isSurrounded(row - 1, col)) {
             List<int[]> capturedValues = board.caputured(row - 1, col);
+            alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
             }
@@ -108,6 +124,7 @@ public class Game {
         }
         if (board.isField(row, col + 1) && board.isSurrounded(row, col + 1)) {
             List<int[]> capturedValues = board.caputured(row, col + 1);
+            alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
             }
@@ -115,6 +132,7 @@ public class Game {
         }
         if (board.isField(row, col - 1) && board.isSurrounded(row, col - 1)) {
             List<int[]> capturedValues = board.caputured(row, col - 1);
+            alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
             }
@@ -122,11 +140,13 @@ public class Game {
         // This one should be last because enemy capture is first
         if (board.isSurrounded(row, col)) {
             List<int[]> capturedValues = board.caputured(row, col);
+            alRemovedValues.addAll(capturedValues);
             for (int i = 0; i < capturedValues.size(); i++) {
                 removeStone(capturedValues.get(i)[0], capturedValues.get(i)[1], board);
             }
 
         }
+        return alRemovedValues;
     }
 
     /**

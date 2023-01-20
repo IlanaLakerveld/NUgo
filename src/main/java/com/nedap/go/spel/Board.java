@@ -257,8 +257,12 @@ public class Board {
     }
 
 
-
-
+    public void print() {
+//        for(int i = 0 ; i <DIM <i++){
+//            for(int j = 0 ; )
+//        }
+//    }
+    }
 
 
 }

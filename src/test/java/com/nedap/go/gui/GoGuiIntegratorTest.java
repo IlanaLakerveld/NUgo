@@ -13,6 +13,8 @@ public class GoGuiIntegratorTest {
 	public void boardSizeTest() {
 		GoGuiIntegrator goGuiIntegrator = new GoGuiIntegrator(true, true, 10);
 		assertEquals(10, goGuiIntegrator.getBoardSize());
+
+
 	}
 
 }
