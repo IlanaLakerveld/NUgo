@@ -35,9 +35,15 @@ public class GameGo {
         currentPlayer=playerBlack; // player 1 ( Black ) always starts
         boolean gameStop = false ;
         while(!gameStop){
-            Move move = currentPlayer.determineMove() ;
+            boolean checkMove=false;
+            Move move = null;
+            while(!checkMove) {
+                move = currentPlayer.determineMove();
+                if(game.isValidMove(move)){
+                    checkMove=true;
+                }
 
-
+            }
             if(move == null){
                 System.out.println("player has pass the move");
             }

@@ -55,6 +55,9 @@ public class Game {
      * @return true if the move is a legal move
      */
     public boolean isValidMove(Move move) {
+        if(move == null){
+            return true; // this is a pass move
+        }
         // Check if the move is on the field
         if (!board.isField(move.getRow(), move.getCol())) {
             return false;
@@ -96,8 +99,7 @@ public class Game {
 
     public List<int[]> changesForGUI(Move move){
         Board copyBoard = board.CopyBoard();
-        List<int[]> ints = changeOnboardDoneByMove(move, copyBoard);
-        return ints ;
+        return changeOnboardDoneByMove(move, copyBoard);
     }
 
 
@@ -141,8 +143,8 @@ public class Game {
         if (board.isSurrounded(row, col)) {
             List<int[]> capturedValues = board.caputured(row, col);
             alRemovedValues.addAll(capturedValues);
-            for (int i = 0; i < capturedValues.size(); i++) {
-                removeStone(capturedValues.get(i)[0], capturedValues.get(i)[1], board);
+            for (int[] capturedValue : capturedValues) {
+                removeStone(capturedValue[0], capturedValue[1], board);
             }
 
         }

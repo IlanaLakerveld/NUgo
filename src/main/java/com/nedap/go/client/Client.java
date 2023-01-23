@@ -106,6 +106,7 @@ public class Client implements Runnable {
                         printWriter.flush();
                         break;
 //                    case NEWGAME:
+                    
 //                    case MOVE:
 //                    case GAMEOVER:
                     default:

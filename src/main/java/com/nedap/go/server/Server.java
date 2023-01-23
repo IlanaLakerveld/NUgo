@@ -131,7 +131,7 @@ public class Server implements Runnable {
         // op moment dat spel if afgelopoen zou je wel graag de aparte threads weer terug hebben zodat clients nog een keer spel kunnen spelen
     }
 
-
+// PLayerQueue moet door een thread tegelijkertijd moeten kunnen bereikt
     public void addOrRemovePlayerFromQueue(ClientHandler cl){
         if(playerQueue.contains(cl.getMyUsername())){
             playerQueue.remove(cl.getMyUsername());
@@ -141,7 +141,7 @@ public class Server implements Runnable {
 
 
 
-/// DIT KAN NIET HIERBIJ GAAN SPELLEN DOORELKAAR HEEN DINGEN NAAR ELKAAR SCHREEUWEN
+///
     // Deze functie gaat weg
     public void messageSender(String message) {
         for(ClientHandler cl : clientHandlerList){

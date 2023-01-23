@@ -24,7 +24,7 @@ public class ClientTUI {
         System.out.println("Trying to connect with " + inputAddress + " on port : " + port);
         Client client = new Client(addressSever, port);
         client.connect();
-        Boolean wantToQuit = false;
+        boolean wantToQuit = false;
         while (!wantToQuit) {
             String message = scanner.nextLine();
             if (message.equals("quit")) {

@@ -9,9 +9,9 @@ import java.util.Scanner;
 
 public class AbstractPlayer {
     static Scanner scanner = new Scanner(System.in);
-    private String name ;
-    private StoneColour colour ;
-    private Game game ;
+    private final String name ;
+    private final  StoneColour colour ;
+    private final Game game ;
 
     public AbstractPlayer(String name, StoneColour colour) {
         this.name = name;
@@ -32,7 +32,7 @@ public class AbstractPlayer {
             int row;
             int col;
             System.out.println(name + " which move you want to make tell the row");
-            row = scanner.nextInt();// HIER NOG EEN TRY CATCH METHODE
+            row = scanner.nextInt();
             System.out.println(name+ " which move you want to make tell the col ");
             col = scanner.nextInt();
             scanner.nextLine();

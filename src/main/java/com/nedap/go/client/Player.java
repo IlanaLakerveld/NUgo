@@ -2,6 +2,9 @@ package com.nedap.go.client;
 
 //import com.nedap.go.spel.*;
 
+import com.nedap.go.spel.Game;
+import com.nedap.go.spel.Move;
+
 public abstract class Player {
     private String name;
 
@@ -22,7 +25,7 @@ public abstract class Player {
     }
 
 
-//    public abstract Move determineMove(Game game);
+    public abstract Move determineMove(Game game);
 
 
 }

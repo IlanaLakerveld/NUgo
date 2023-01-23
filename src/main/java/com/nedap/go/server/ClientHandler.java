@@ -43,7 +43,7 @@ public class ClientHandler implements Runnable {
     /**
      * Runs this operation.
      * Reads the input and depending on this input with the switch command goes to the right output
-     * <p>
+     *
      * hier mist nog een boolean die ervoor zorgt dat je in bepaalde situaties dingen niet kan (zoals een spel proberen te starten als je nog geen username is gegeven)
      * De functies die dezelfde naam hebben als de input zijn nog niet af en of niet correct
      */

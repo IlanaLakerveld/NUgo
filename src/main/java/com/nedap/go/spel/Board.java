@@ -160,6 +160,14 @@ public class Board {
        return list;
     }
 
+    /**
+     *
+     * @param row row position of the place you are looking at
+     * @param col col position of the place you are looking at
+     * @param colour colour of the captured stone
+     * @param startPosition the position from where you are trying to get the field that needs to be captured, this position is needed to prevent infinite loops.
+     * @return a list of fields that need to be removed
+     */
     private List<int[]>listOfFieldThatNeedsToBeRemoved(int row,int col,StoneColour colour,String startPosition){
         List<int[]> list = new ArrayList<int[]>();
         if(!isField(row,col)||getField(row,col)!=colour) {
@@ -185,11 +193,12 @@ public class Board {
 
 
     /**
-     * check if the on one side if "captured"
+     * Check if the on one side if "captured"
+     * if the stone is the same colour then you need to check the next stone, you check on three sides not of 4 because you know already the value of field from the previous stone.
      *
      * @param row        row of the field you want to check
      * @param col        col of the field you want to check
-     * @param stone      sstone colour of this stone
+     * @param stone      stone colour of this stone
      * @param horizontal true is you want to check of the rows, false if you want to check the columns
      * @param rightSide  true if you want to check the right side, false is you want to check the left side
      * @param down       true is you want to check the field below true is you want to check the field up
@@ -240,12 +249,6 @@ public class Board {
     }
 
 
-    public void print() {
-//        for(int i = 0 ; i <DIM <i++){
-//            for(int j = 0 ; )
-//        }
-//    }
-    }
 
 
 }

@@ -1,5 +1,8 @@
 package com.nedap.go.client;
 
+import com.nedap.go.spel.Game;
+import com.nedap.go.spel.Move;
+
 public class HumanPlayer extends Player{
     /**
      * Constructor
@@ -8,5 +11,10 @@ public class HumanPlayer extends Player{
      */
     public HumanPlayer(String name) {
         super(name);
+    }
+
+    @Override
+    public Move determineMove(Game game) {
+        return null;
     }
 }
