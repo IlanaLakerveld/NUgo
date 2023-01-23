@@ -1,11 +1,12 @@
 package com.nedap.go.server;
 
+import com.nedap.go.spel.Board;
+import com.nedap.go.spel.StoneColour;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 
 public class Server implements Runnable {
@@ -15,7 +16,7 @@ public class Server implements Runnable {
     private boolean active;
     private Thread socketThread;
 
-    private Queue playerQueue;
+    private Queue playerQueue = new LinkedList();
 
     public List usernames = new ArrayList<>();
 
@@ -117,38 +118,25 @@ public class Server implements Runnable {
      * Hier zit waarschijnlijk het probleem. Deze functie moet bedenken dat er een mensen in de wachtrij zitten  en met die speler het spel starten
      */
     public void startNewGame() {
-//
-//        while (playerQueue.size() < 2) {}
-                    // wacht hier totdat dit niet zo is
-//
-        // als wel zo is dan haal die twee client handlers uit de wacht ij
-        // start een spel met die twee Clienthandlers
-        // Die twee clienthandlers zitten hebben allebei een apparte thread.
-        // het spel kan gestart worden door de functie gameGo te starten.
-        // gameplay heeft abstract players als input functie iedere clienthandler word wat de client handler is en een de kleur die ze zijn.
-        // (nog niet helemaal uitgewerkt idee maar zoiets)
-        // meest logische is volgens mij om de gameGO op een aparte thread te zetten maar daarvoor wil je eerst van de ClientHandler threads af.
-        // op moment dat spel if afgelopoen zou je wel graag de aparte threads weer terug hebben zodat clients nog een keer spel kunnen spelen
+        if(playerQueue.size()  >= 2){
+            AbstractPlayer player1 = new AbstractPlayer(StoneColour.BLACK, (ClientHandler) playerQueue.poll()) ;
+            AbstractPlayer player2 = new AbstractPlayer(StoneColour.WHITE, (ClientHandler) playerQueue.poll()) ;
+            player1.sendMessage("NEWGAME~"+player1.getName()+"~"+player2.getName());
+            player2.sendMessage("NEWGAME~"+player1.getName()+"~"+player2.getName());
+            new Thread(new GameGo(player1,player2, Board.DIM) ).start();
+        }
     }
 
 // PLayerQueue moet door een thread tegelijkertijd moeten kunnen bereikt
-    public void addOrRemovePlayerFromQueue(ClientHandler cl){
-        if(playerQueue.contains(cl.getMyUsername())){
+    public synchronized void addOrRemovePlayerFromQueue(ClientHandler cl){
+        if(!playerQueue.isEmpty() && playerQueue.contains(cl.getMyUsername())){
             playerQueue.remove(cl.getMyUsername());
         }
-        playerQueue.add(cl) ;
-    }
-
-
-
-///
-    // Deze functie gaat weg
-    public void messageSender(String message) {
-        for(ClientHandler cl : clientHandlerList){
-          cl.sendMessage(message);
+        else {
+            playerQueue.add(cl);
+            startNewGame();
         }
     }
-
 
 
 }

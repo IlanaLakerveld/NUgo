@@ -22,7 +22,7 @@ public class ClientTUI {
             System.out.println("please choose a correct input address");
         }
         System.out.println("Trying to connect with " + inputAddress + " on port : " + port);
-        Client client = new Client(addressSever, port);
+        Client client = new Client(addressSever, port, scanner);
         client.connect();
         boolean wantToQuit = false;
         while (!wantToQuit) {
@@ -30,8 +30,12 @@ public class ClientTUI {
             if (message.equals("quit")) {
                 wantToQuit = true;
                 client.close();
-
             }
+            if(message.toUpperCase().equals("GO")){
+                client.goToQueue();
+            }
+
+
         }
     }
 }

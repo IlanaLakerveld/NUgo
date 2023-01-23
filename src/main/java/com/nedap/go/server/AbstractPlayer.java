@@ -11,45 +11,38 @@ public class AbstractPlayer {
     static Scanner scanner = new Scanner(System.in);
     private final String name ;
     private final  StoneColour colour ;
-    private final Game game ;
+  private ClientHandler cl ;
 
-    public AbstractPlayer(String name, StoneColour colour) {
-        this.name = name;
+    public AbstractPlayer( StoneColour colour,ClientHandler cl ) {
+        this.name = cl.getMyUsername();
         this.colour =colour;
-        game= new Game(new Board());
+        this.cl = cl ;
+
     }
 
     public Move determineMove() {
-        boolean moveOke = false;
-        Move move = null;
-        String pass;
-        System.out.println(name +" do you want to pass? type pass");
-        pass =scanner.nextLine();
-        if(pass.equals("pass")){
-            return null;
+       Move move = null ;
+       cl.sendMessage("YOURTURN");
+        int[] moveFromClient = cl.getMove();
+        if( moveFromClient!=null) {
+            move = new Move(moveFromClient[0], moveFromClient[1], colour);
+            System.out.println(getName()+"move that is outputed is "+ move.getRow() + move.getCol());
+        } else if (moveFromClient != null) {
+            System.out.println(getName()+"move is pass");
         }
-        while(!moveOke) {
-            int row;
-            int col;
-            System.out.println(name + " which move you want to make tell the row");
-            row = scanner.nextInt();
-            System.out.println(name+ " which move you want to make tell the col ");
-            col = scanner.nextInt();
-            scanner.nextLine();
-            move = new Move(row, col, colour);
-            if (game.isValidMove(move)) {
-                moveOke =true;
-            }
-            else{
-                System.out.println("this is not a valid move");
-            }
-        }
-        System.out.println("move oke ");
+
         return move ;
     }
 
+    public void sendMessage(String message){
+        cl.sendMessage(message);
+    }
 
-    public void addMoveToOneGame(Move move){
-        game.doMove(move);
+    public String getName() {
+        return name;
+    }
+
+    public void setReadBooleanToFalse(){
+        cl.setValueRead(false);
     }
 }

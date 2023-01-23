@@ -5,11 +5,12 @@ import com.nedap.go.spel.*;
 
 import java.util.List;
 
-public class GameGo {
+public class GameGo implements Runnable{
     private AbstractPlayer playerBlack ;
     private AbstractPlayer playerWhite ;
     private AbstractPlayer currentPlayer ;
-    private GoGuiIntegrator gogui;
+
+//    private GoGuiIntegrator gogui;
     private int boardSize ;
     private Game game ;
 
@@ -21,16 +22,16 @@ public class GameGo {
     public GameGo(AbstractPlayer player1 , AbstractPlayer player2 ,int boardSize ) {
         playerBlack=player1;
         playerWhite=player2;
+
         this.boardSize=boardSize;
 
 
     }
 
-    public void spel() {
+    public void run() {
         game = new Game(new Board());
-        gogui = new GoGuiIntegrator(true, false, boardSize);
-        gogui.startGUI();
-        gogui.setBoardSize(boardSize);
+        readBoolean(); //begin no one had read a move
+
 
         currentPlayer=playerBlack; // player 1 ( Black ) always starts
         boolean gameStop = false ;
@@ -42,33 +43,28 @@ public class GameGo {
                 if(game.isValidMove(move)){
                     checkMove=true;
                 }
-
+                else{
+                    currentPlayer.sendMessage("INVALIDMOVE");
+                }
             }
-            if(move == null){
-                System.out.println("player has pass the move");
+
+            game.doMove(move);
+           // tell players the move
+            if(move == null) {
+                sendMessages("MOVE~" + currentPlayer.getName() + "~PASS");
             }
-            else {
-                System.out.println("the current move is " + move.getRow() + " " + move.getCol());
-
-                gogui.addStone(move.getRow(), move.getCol(), isStoneWhite(move));
-                List<int[]> removedStones = game.changesForGUI(move);
-                if(removedStones!=null) {
-                    for (int[] removedStone : removedStones) {
-
-                        gogui.removeStone(removedStone[0], removedStone[1]);
-                    }
+               else{
+                   sendMessages("MOVE~"+currentPlayer.getName()+"~"+move.getRow()+move.getCol());
                 }
 
-            }
-            game.doMove(move);
-            tellMoveToPlayers(move);
             switchPlayer();
             if(game.isGameOver()){
                 gameStop= true ;
             }
 
         }
-        System.out.println("the player with stone colour "+game.isWinner()+ " is the winner")  ;
+        sendMessages("the player with stone colour "+game.isWinner()+ " is the winner");
+        readBoolean();  //begin no one had read a move;
 
     }
 
@@ -86,14 +82,16 @@ public class GameGo {
     }
 
 
-    private void tellMoveToPlayers(Move move){
-        playerBlack.addMoveToOneGame(move);
-        playerWhite.addMoveToOneGame(move);
+    public void readBoolean(){
+        playerBlack.setReadBooleanToFalse();
+        playerWhite.setReadBooleanToFalse();
     }
 
-    private boolean isStoneWhite(Move move){
-        return move.getColour().equals(StoneColour.WHITE);
+    public void sendMessages(String message){
+        playerWhite.sendMessage(message);
+        playerBlack.sendMessage(message);
     }
+
 
 
 }

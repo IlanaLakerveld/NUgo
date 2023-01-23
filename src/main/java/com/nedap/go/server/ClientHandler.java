@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -13,6 +14,8 @@ public class ClientHandler implements Runnable {
     private BufferedReader bR;
 
     private String myUsername;
+    private int[] currentMove;
+    private boolean valueRead ;  ;
 
 
     private static final String HELLO = "HELLO";
@@ -43,7 +46,7 @@ public class ClientHandler implements Runnable {
     /**
      * Runs this operation.
      * Reads the input and depending on this input with the switch command goes to the right output
-     *
+     * <p>
      * hier mist nog een boolean die ervoor zorgt dat je in bepaalde situaties dingen niet kan (zoals een spel proberen te starten als je nog geen username is gegeven)
      * De functies die dezelfde naam hebben als de input zijn nog niet af en of niet correct
      */
@@ -60,6 +63,7 @@ public class ClientHandler implements Runnable {
                 }
                 String[] splittedLine = line.split("~");
                 String command = splittedLine[0].toUpperCase();
+                System.out.println(command); // MOET OP HET EINDE NOG WEG MAAR VOOR NU HOUDEN
                 switch (command) {
                     case HELLO:
                         hello();
@@ -95,7 +99,6 @@ public class ClientHandler implements Runnable {
 
     public void close() {
         try {
-//
             bR.close();
             server.usernames.remove(myUsername);
 
@@ -107,38 +110,35 @@ public class ClientHandler implements Runnable {
 
 
     private void queue() {
-        System.out.println("test of hier komt queue");
         server.addOrRemovePlayerFromQueue(this);
 
     }
 
     private void username(String username) {
-        System.out.println("test functie komt bij username ");
         if (!server.usernames.contains(username)) {
             this.myUsername = username;
             server.usernames.add(username);
-            pW.println("JOINED");
-            pW.flush();
+            sendMessage("JOINED");
+
         } else {
-            pW.println("USERNAMETAKEN~username is already taken please use another username");
-            pW.flush();
+            sendMessage("USERNAMETAKEN~username is already taken please use another username");
         }
 
     }
 
     private void hello() {
-        pW.println("WELCOME~This is the server van Ilana");
-        pW.flush();
+        sendMessage("WELCOME~This is the server van Ilana");
     }
 
     private void pass() {
-        // hier iets wat doorstuurd naar het spel
-        String s = myUsername + "~" + "pass";
+        setMove(null);
     }
 
     private void move(int row, int col) {
-
-        String s = "" + row + "~" + col;
+        int[] value = new int[2] ;
+        value[0] = row ;
+        value[1] = col  ;
+        setMove(value);
 
     }
 
@@ -155,4 +155,48 @@ public class ClientHandler implements Runnable {
     public String getMyUsername() {
         return myUsername;
     }
+
+
+    public synchronized int[] getMove() {
+        while(valueRead){
+           try {
+               wait();
+           } catch (InterruptedException e) {
+               throw new RuntimeException(e);
+           }
+        }
+        valueRead= true ;
+        notifyAll();
+        return currentMove;
+    }
+
+    public synchronized void setMove(int[] val) {
+        while(!valueRead){
+            try{
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+       if(val == null){
+           currentMove = null ;
+       }
+       else {
+           currentMove[0] = val[0];
+           currentMove[1] = val[1];
+       }
+        valueRead=false ;
+        notifyAll();
+    }
+
+
+    /**
+     * set value before a game and after a game is finished.
+     * @param valueRead
+     */
+    public void setValueRead(boolean valueRead) {
+        this.valueRead = valueRead;
+    }
 }
+
