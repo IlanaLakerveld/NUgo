@@ -51,10 +51,11 @@ public class GameGo implements Runnable{
             game.doMove(move);
            // tell players the move
             if(move == null) {
+                System.out.println(" comes here");
                 sendMessages("MOVE~" + currentPlayer.getName() + "~PASS");
             }
                else{
-                   sendMessages("MOVE~"+currentPlayer.getName()+"~"+move.getRow()+move.getCol());
+                   sendMessages("MOVE~"+currentPlayer.getName()+"~"+move.getRow()+"~"+move.getCol());
                 }
 
             switchPlayer();
@@ -63,7 +64,8 @@ public class GameGo implements Runnable{
             }
 
         }
-        sendMessages("the player with stone colour "+game.isWinner()+ " is the winner");
+
+        sendMessages("GAMEOVER~the player with stone colour~"+game.isWinner());
         readBoolean();  //begin no one had read a move;
 
     }

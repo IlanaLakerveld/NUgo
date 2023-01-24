@@ -4,11 +4,14 @@ import com.nedap.go.spel.Game;
 import com.nedap.go.spel.Move;
 import com.nedap.go.spel.StoneColour;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Scanner;
 
 public class HumanPlayer extends Player{
 
-     Scanner scanner ;
+    BufferedReader reader ;
 
 
     /**
@@ -16,9 +19,9 @@ public class HumanPlayer extends Player{
      *
      * @param name name of the player
      */
-    public HumanPlayer(String name, StoneColour colour,Scanner scanner) {
+    public HumanPlayer(String name, StoneColour colour, Reader input) {
         super(name,colour);
-        this.scanner=scanner;
+        reader = new BufferedReader(input);
     }
 
     @Override
@@ -26,20 +29,26 @@ public class HumanPlayer extends Player{
         boolean moveOke = false;
         Move move = null;
         String pass;
-        System.out.println("Do you want to pass? type pass, otherwise do nothing");
-        pass =scanner.nextLine();
-        System.out.println(pass);
+        System.out.println("Do you want to pass? type pass, otherwise enter");
+        try {
+            pass =reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if(pass.equals("pass")){
             return null;
         }
         while(!moveOke) {
             int row;
             int col;
-            System.out.println(" which move you want to make tell the row");
-            row = scanner.nextInt();
-            System.out.println(" which move you want to make tell the col ");
-            col = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                System.out.println(" which move you want to make tell the row");
+                row = Integer.parseInt(reader.readLine());
+                System.out.println(" which move you want to make tell the col ");
+                col = Integer.parseInt(reader.readLine());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             move = new Move(row, col, colour);
             if (game.isValidMove(move)) {
                 moveOke =true;

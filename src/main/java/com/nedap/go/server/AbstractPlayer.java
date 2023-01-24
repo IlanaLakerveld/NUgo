@@ -27,7 +27,7 @@ public class AbstractPlayer {
         if( moveFromClient!=null) {
             move = new Move(moveFromClient[0], moveFromClient[1], colour);
             System.out.println(getName()+"move that is outputed is "+ move.getRow() + move.getCol());
-        } else if (moveFromClient != null) {
+        } else if (moveFromClient == null) {
             System.out.println(getName()+"move is pass");
         }
 
@@ -43,6 +43,6 @@ public class AbstractPlayer {
     }
 
     public void setReadBooleanToFalse(){
-        cl.setValueRead(false);
+        cl.setValueRead(true);
     }
 }

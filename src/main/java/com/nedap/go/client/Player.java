@@ -46,7 +46,7 @@ public abstract class Player {
 
     public void updateBoard(Move move){
         if(move == null){
-            System.out.println("PASS");
+            System.out.println("The move is PASS");
         }
         else {
 

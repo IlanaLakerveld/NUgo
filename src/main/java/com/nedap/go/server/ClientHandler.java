@@ -64,6 +64,7 @@ public class ClientHandler implements Runnable {
                 String[] splittedLine = line.split("~");
                 String command = splittedLine[0].toUpperCase();
                 System.out.println(command); // MOET OP HET EINDE NOG WEG MAAR VOOR NU HOUDEN
+                System.out.println("the input line is :" + line);
                 switch (command) {
                     case HELLO:
                         hello();
@@ -78,7 +79,7 @@ public class ClientHandler implements Runnable {
                         pass();
                         break;
                     case MOVE:
-                        move(Integer.parseInt(splittedLine[1]), Integer.parseInt(splittedLine[2]));
+                        move(Integer.parseInt(splittedLine[2]), Integer.parseInt(splittedLine[3]));
                         break;
                     case QUIT:
                         quit();
@@ -138,6 +139,7 @@ public class ClientHandler implements Runnable {
         int[] value = new int[2] ;
         value[0] = row ;
         value[1] = col  ;
+        System.out.println(""+value[0]+value[1]);
         setMove(value);
 
     }
@@ -183,6 +185,7 @@ public class ClientHandler implements Runnable {
            currentMove = null ;
        }
        else {
+           currentMove = new int[2];
            currentMove[0] = val[0];
            currentMove[1] = val[1];
        }

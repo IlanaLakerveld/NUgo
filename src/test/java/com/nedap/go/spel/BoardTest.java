@@ -174,13 +174,15 @@ public class BoardTest {
         board.setField(4, 2, StoneColour.BLACK);
 
 
-
         List<int[]> list  ;
-        list = board.caputured(2, 3);
-
+        list = board.caputured(2, 2);
 
         assertEquals(list.size(),4,0.0);
 
+        List<int[]> list2  ;
+        list2 = board.caputured(2, 3);
+
+        assertEquals(list2.size(),4,0.0);
 
 
     }
