@@ -109,7 +109,7 @@ public class Game {
         List<int[]> alRemovedValues = new ArrayList<>();
         board.setField(row, col, move.getColour());
         if (board.isField(row + 1, col) && board.isSurrounded(row + 1, col)) {
-            List<int[]> capturedValues = board.caputured(row + 1, col);
+            List<int[]> capturedValues = board.captured(row + 1, col);
             alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
@@ -117,7 +117,7 @@ public class Game {
             }
         }
         if (board.isField(row - 1, col) && board.isSurrounded(row - 1, col)) {
-            List<int[]> capturedValues = board.caputured(row - 1, col);
+            List<int[]> capturedValues = board.captured(row - 1, col);
             alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
@@ -125,7 +125,7 @@ public class Game {
 
         }
         if (board.isField(row, col + 1) && board.isSurrounded(row, col + 1)) {
-            List<int[]> capturedValues = board.caputured(row, col + 1);
+            List<int[]> capturedValues = board.captured(row, col + 1);
             alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
@@ -133,7 +133,7 @@ public class Game {
 
         }
         if (board.isField(row, col - 1) && board.isSurrounded(row, col - 1)) {
-            List<int[]> capturedValues = board.caputured(row, col - 1);
+            List<int[]> capturedValues = board.captured(row, col - 1);
             alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
@@ -141,7 +141,7 @@ public class Game {
         }
         // This one should be last because enemy capture is first
         if (board.isSurrounded(row, col)) {
-            List<int[]> capturedValues = board.caputured(row, col);
+            List<int[]> capturedValues = board.captured(row, col);
             alRemovedValues.addAll(capturedValues);
             for (int[] capturedValue : capturedValues) {
                 removeStone(capturedValue[0], capturedValue[1], board);
@@ -196,17 +196,26 @@ public class Game {
         for (Move move : emptySpace) {
             StoneColour firstSide = findColourSide(move.getRow()+1, move.getCol(), true, true,false);
             StoneColour secondSide = findColourSide(move.getRow()-1, move.getCol(), true,false,false) ;
+
+            // false if A=B || A=empty || B=empty ;
+            // true if (A≠B && A≠empty && B≠empty ;
             if(!firstSide.equals(secondSide) && !firstSide.equals(StoneColour.EMPTY) && !secondSide.equals(StoneColour.EMPTY)) {
               continue;
             }
             StoneColour thirdSide = findColourSide(move.getRow(), move.getCol() + 1, false, false, true);
-            if(!thirdSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY)&&secondSide.equals(StoneColour.EMPTY))&& (!firstSide.equals(StoneColour.EMPTY) && !thirdSide.equals(firstSide))&& (!secondSide.equals(StoneColour.EMPTY) && !thirdSide.equals(secondSide)) ) {
+            // false if C=empty || A=B=empty || (A=empty || A=C) || (B=empty || B=C)
+            // true if  C≠empty && (A≠empty || B≠empty) && (A≠empty || A≠C) && (B≠empty "" B≠C)
+            if(!thirdSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY))&& (!firstSide.equals(StoneColour.EMPTY) && !thirdSide.equals(firstSide))&& (!secondSide.equals(StoneColour.EMPTY) && !thirdSide.equals(secondSide)) ) {
                 continue;
             }
+            // false if D=empty || A=B=C=empty || (A=empty || A=C) || (B=empty || B=C) ||(C=empty || C=D)
+            // true  if D≠empty && (A≠empty || B≠empty || C≠empty) && (A≠empty && A≠D) && (B≠empty && B≠D) && (C≠empty && C≠D)
             StoneColour fourthSide = findColourSide(move.getRow(), move.getCol() - 1, false, false, false);
-            if(!fourthSide.equals(StoneColour.EMPTY )&& !(firstSide.equals(StoneColour.EMPTY)&&secondSide.equals(StoneColour.EMPTY)&&thirdSide.equals(StoneColour.EMPTY))&& (!firstSide.equals(StoneColour.EMPTY) && !fourthSide.equals(firstSide))&&(!secondSide.equals(StoneColour.EMPTY) && !fourthSide.equals(secondSide))&&(!thirdSide.equals(StoneColour.EMPTY) && !fourthSide.equals(thirdSide))){
+            if(!fourthSide.equals(StoneColour.EMPTY )&& !(firstSide.equals(StoneColour.EMPTY)&&secondSide.equals(StoneColour.EMPTY)&& thirdSide.equals(StoneColour.EMPTY))&& (!firstSide.equals(StoneColour.EMPTY) && !fourthSide.equals(firstSide))&&( !secondSide.equals(StoneColour.EMPTY) && !fourthSide.equals(secondSide) )&&(!thirdSide.equals(StoneColour.EMPTY) && !fourthSide.equals(thirdSide))){
                 continue;
             }
+            // false if A≠empty || B≠empty || C≠empty || D≠empty
+            // true if A=B=C=D=empty
             if (firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY)&&thirdSide.equals(StoneColour.EMPTY)&&fourthSide.equals(StoneColour.EMPTY)){
                 continue;
             }

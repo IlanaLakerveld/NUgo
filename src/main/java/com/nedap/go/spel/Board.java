@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * This is the class board with the board logic in it.
+ */
+
 public class Board {
 
     private StoneColour[][] fields;
@@ -135,61 +139,56 @@ public class Board {
     /**
      * Creates a list of arrays(row,col) that are fields that are captured
      *
-     * @param row row of the stone that is caputured/surrounded
+     * @param row row of the stone that is captured/surrounded
      * @param col column of the stone that is captured/surrounded
      * @return list of arrays(row,col) that are surrounded.
      */
-    public List<int[]> caputured(int row, int col) {
+    public List<int[]> captured(int row, int col) {
         List<int[]> list = new ArrayList<int[]>();
         // check if is actually surrounded
         if (!isSurrounded(row, col)) {
             return null;
         }
 
-        StoneColour colour = getField(row,col);
+        StoneColour colour = getField(row, col);
         // check all directions
         list.add(new int[]{row, col});
 
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row+1,col,colour,""+row+col));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row-1,col,colour,""+row+col));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row,col+1,colour,""+row+col));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row,col-1,colour,""+row+col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, "" + row + col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, "" + row + col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, "" + row + col));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, "" + row + col));
         List<int[]> listWithoutDuplicates = new ArrayList<>(new HashSet<>(list));
-
-
-       return list;
+        return listWithoutDuplicates;
     }
 
     /**
-     *
-     * @param row row position of the place you are looking at
-     * @param col col position of the place you are looking at
-     * @param colour colour of the captured stone
+     * @param row           row position of the place you are looking at
+     * @param col           col position of the place you are looking at
+     * @param colour        colour of the captured stone
      * @param startPosition the position from where you are trying to get the field that needs to be captured, this position is needed to prevent infinite loops.
      * @return a list of fields that need to be removed
      */
-    private List<int[]>listOfFieldThatNeedsToBeRemoved(int row,int col,StoneColour colour,String startPosition){
+    private List<int[]> listOfFieldThatNeedsToBeRemoved(int row, int col, StoneColour colour, String startPosition) {
         List<int[]> list = new ArrayList<int[]>();
-        if(!isField(row,col)||getField(row,col)!=colour) {
+        if (!isField(row, col) || getField(row, col) != colour) {
             return list;
         }
         list.add(new int[]{row, col});
-        if(!startPosition.equals(""+(row+1)+col)) {
+        if (!startPosition.equals("" + (row + 1) + col)) {
             list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, "" + row + col));
         }
-        if(!startPosition.equals(""+(row-1)+col)) {
+        if (!startPosition.equals("" + (row - 1) + col)) {
             list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, "" + row + col));
         }
-        if(!startPosition.equals(""+row+(col+1))) {
+        if (!startPosition.equals("" + row + (col + 1))) {
             list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, "" + row + col));
         }
-        if(!startPosition.equals(""+row+(col-1))) {
+        if (!startPosition.equals("" + row + (col - 1))) {
             list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, "" + row + col));
         }
-        return list ;
+        return list;
     }
-
-
 
 
     /**
@@ -217,14 +216,14 @@ public class Board {
             if (horizontal) {
                 if (rightSide) {
 
-                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row , col+1, stone, false, false, true) && checkerSideAreCaptured(row , col-1, stone, false, false, false)) {
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
                         return true;
                     } else {
                         return false;
                     }
 
                 } else {
-                    if (checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row , col+1, stone, false, false, true) && checkerSideAreCaptured(row , col-1, stone, false, false, false)) {
+                    if (checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
                         return true;
                     } else {
                         return false;
@@ -232,13 +231,13 @@ public class Board {
                 }
             } else {
                 if (down) {
-                    if (checkerSideAreCaptured(row + 1, col ,stone, true, true, false) && checkerSideAreCaptured(row-1, col , stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true)) {
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true)) {
                         return true;
                     } else {
                         return false;
                     }
                 } else {
-                    if (checkerSideAreCaptured(row+ 1, col , stone, true, true, false) && checkerSideAreCaptured(row-1, col , stone, true, false, false) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
                         return true;
                     } else {
                         return false;
@@ -247,8 +246,6 @@ public class Board {
             }
         }
     }
-
-
 
 
 }
