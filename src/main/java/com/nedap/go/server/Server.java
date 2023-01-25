@@ -8,6 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
+/**
+ * This is the class server.
+ */
 
 public class Server implements Runnable {
 
@@ -15,10 +18,8 @@ public class Server implements Runnable {
     private int port;
     private boolean active;
     private Thread socketThread;
-
     private Queue playerQueue = new LinkedList();
-
-    public List usernames = new ArrayList<>();
+    public List<Object> usernames = new ArrayList<>();
 
 
 
@@ -36,7 +37,7 @@ public class Server implements Runnable {
 
 
     /**
-     * The starting function start the server. The function only works if not already active
+     * The starting function start the server. The function only works if not already active.
      */
 
     public void start() {
@@ -60,7 +61,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * @return returns the port the server is on. if the server is not active the get port returns -1
+     * @return returns the port the server is on (between  0 and 65535). if the server is not active the get port returns -1.
      */
     public int getPort() {
         if (active) {
@@ -71,7 +72,8 @@ public class Server implements Runnable {
 
 
     /**
-     * If this function is called, this function is trying to stop the server nicely
+     * If this function is called, this function is trying to stop the server nicely.
+     * Can only stop the server is the server is started. The function stops also the thread the server is on.
      */
     public void stop() {
         if (!active) {
@@ -81,14 +83,14 @@ public class Server implements Runnable {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            System.out.println("Can not close the serversocket");
-//            throw new RuntimeException(e);
+            System.out.println("Can not close the server socket");
+
         }
         try {
             socketThread.join();
         } catch (InterruptedException e) {
             System.out.println("can not join the socket thread");
-//            throw new RuntimeException(e);
+
         }
         active = false;
     }
@@ -105,7 +107,7 @@ public class Server implements Runnable {
                 Socket socket = serverSocket.accept(); // Here it waits until it has a connection
                 ClientHandler clientHandler = new ClientHandler(socket, this);
                 clientHandlerList.add(clientHandler);
-                new Thread(clientHandler).start(); // The thread for nieuw client
+                new Thread(clientHandler).start(); // The thread for new client
             } catch (IOException e) {
                 System.out.println("Server is closed");
             }
@@ -114,20 +116,25 @@ public class Server implements Runnable {
 
     /**
      * Starts a new game if there are more than 2 players in the queue.
-     *
-     * Hier zit waarschijnlijk het probleem. Deze functie moet bedenken dat er een mensen in de wachtrij zitten  en met die speler het spel starten
+     *This game starts on a new thread. The first players on the list is player black and the second player on the list will be player white.
      */
     public void startNewGame() {
         if(playerQueue.size()  >= 2){
-            AbstractPlayer player1 = new AbstractPlayer(StoneColour.BLACK, (ClientHandler) playerQueue.poll()) ;
-            AbstractPlayer player2 = new AbstractPlayer(StoneColour.WHITE, (ClientHandler) playerQueue.poll()) ;
+            ServerPlayer player1 = new ServerPlayer(StoneColour.BLACK, (ClientHandler) playerQueue.poll()) ;
+            ServerPlayer player2 = new ServerPlayer(StoneColour.WHITE, (ClientHandler) playerQueue.poll()) ;
             player1.sendMessage("NEWGAME~"+player1.getName()+"~"+player2.getName());
             player2.sendMessage("NEWGAME~"+player1.getName()+"~"+player2.getName());
             new Thread(new GameGo(player1,player2, Board.DIM) ).start();
         }
     }
 
-// PLayerQueue moet door een thread tegelijkertijd moeten kunnen bereikt
+
+
+    /**
+     * This will add the client handler of a client to the queue if the client is already in the queue he will be removed on from the queue.
+     * After someone is added, the function startNewGame is run to check is there can be started a new game.
+     * @param cl client handler.
+     */
     public synchronized void addOrRemovePlayerFromQueue(ClientHandler cl){
         if(!playerQueue.isEmpty() && playerQueue.contains(cl.getMyUsername())){
             playerQueue.remove(cl.getMyUsername());

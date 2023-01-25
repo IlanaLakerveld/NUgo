@@ -1,99 +1,108 @@
 package com.nedap.go.server;
 
-import com.nedap.go.gui.GoGuiIntegrator;
 import com.nedap.go.spel.*;
 
-import java.util.List;
+public class GameGo implements Runnable {
+    private ServerPlayer playerBlack;
+    private ServerPlayer playerWhite;
+    private ServerPlayer currentPlayer;
 
-public class GameGo implements Runnable{
-    private AbstractPlayer playerBlack ;
-    private AbstractPlayer playerWhite ;
-    private AbstractPlayer currentPlayer ;
-
-//    private GoGuiIntegrator gogui;
-    private int boardSize ;
-    private Game game ;
+    private int boardSize;
+    private Game game;
 
     /**
      * Constructor
-     * @param player1
-     * @param player2
+     *
+     * @param player1 player black
+     * @param player2 player white
      */
-    public GameGo(AbstractPlayer player1 , AbstractPlayer player2 ,int boardSize ) {
-        playerBlack=player1;
-        playerWhite=player2;
-
-        this.boardSize=boardSize;
+    public GameGo(ServerPlayer player1, ServerPlayer player2, int boardSize) {
+        playerBlack = player1;
+        playerWhite = player2;
+        this.boardSize = boardSize;
 
 
     }
 
+    /**
+     * This is the game flow. this keeps running until the game is ended or connection is lost.
+     */
     public void run() {
         game = new Game(new Board());
         readBoolean(); //begin no one had read a move
 
-
-        currentPlayer=playerBlack; // player 1 ( Black ) always starts
-        boolean gameStop = false ;
-        while(!gameStop){
-            boolean checkMove=false;
+        currentPlayer = playerBlack; // player 1 ( Black ) always starts
+        boolean gameStop = false;
+        while (!gameStop && !playerBlack.isConnectionLost() && !playerWhite.isConnectionLost()) {
+            boolean checkMove = false;
             Move move = null;
-            while(!checkMove) {
+            while (!checkMove) {
                 move = currentPlayer.determineMove();
-                if(game.isValidMove(move)){
-                    checkMove=true;
-                }
-                else{
+                if (game.isValidMove(move)) {
+                    checkMove = true;
+                } else {
                     currentPlayer.sendMessage("INVALIDMOVE");
                 }
             }
 
             game.doMove(move);
-           // tell players the move
-            if(move == null) {
-                System.out.println(" comes here");
+            // tell players the move
+            if (move == null) {
                 sendMessages("MOVE~" + currentPlayer.getName() + "~PASS");
+            } else {
+                sendMessages("MOVE~" + currentPlayer.getName() + "~" + move.getRow() + "~" + move.getCol());
             }
-               else{
-                   sendMessages("MOVE~"+currentPlayer.getName()+"~"+move.getRow()+"~"+move.getCol());
-                }
 
+            // switch players
             switchPlayer();
-            if(game.isGameOver()){
-                gameStop= true ;
+            if (game.isGameOver()) {
+                gameStop = true;
             }
 
         }
 
-        sendMessages("GAMEOVER~the player with stone colour~"+game.isWinner());
+        // end of the game tell players why game over
+        if (playerWhite.isConnectionLost()) {
+            sendMessages("GAMEOVER~DISCONNECT~" + playerBlack.getName());
+        } else if (playerBlack.isConnectionLost()) {
+            sendMessages("GAMEOVER~DISCONNECT~" + playerWhite.getName());
+        } else {
+            sendMessages("GAMEOVER~the player with stone colour~" + game.isWinner());
+        }
+
         readBoolean();  //begin no one had read a move;
 
     }
 
-    private void switchPlayer(){
-        if( currentPlayer.equals(playerBlack)){
-            currentPlayer=playerWhite;
-        }
-        else if(currentPlayer.equals(playerWhite)){
-            currentPlayer=playerBlack;
+    /**
+     * switch te current player.
+     */
+    private void switchPlayer() {
+        if (currentPlayer.equals(playerBlack)) {
+            currentPlayer = playerWhite;
+        } else if (currentPlayer.equals(playerWhite)) {
+            currentPlayer = playerBlack;
         }
     }
 
-    public AbstractPlayer getCurrentPlayer() {
-        return currentPlayer;
-    }
 
 
-    public void readBoolean(){
+    /**
+     * This is used for synchronisation.
+     */
+    public void readBoolean() {
         playerBlack.setReadBooleanToFalse();
         playerWhite.setReadBooleanToFalse();
     }
 
-    public void sendMessages(String message){
+    /**
+     * This function sends messages to all the players of the game
+     * @param message the messages that is sent to the players
+     */
+    public void sendMessages(String message) {
         playerWhite.sendMessage(message);
         playerBlack.sendMessage(message);
     }
-
 
 
 }

@@ -5,17 +5,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Arrays;
 
+/**
+ * This is the class ClientHandlers. Every client has his own clientHandler. This functions communicate with the client.
+ * This class implements Runnable.
+ */
 public class ClientHandler implements Runnable {
-    private Socket socket;
-    private Server server;
-    private PrintWriter pW;
-    private BufferedReader bR;
+    private final Socket socket;
+    private final Server server;
+    private final PrintWriter pW;
+    private final BufferedReader bR;
 
     private String myUsername;
     private int[] currentMove;
-    private boolean valueRead ;  ;
+    private boolean valueRead ; //This boolean is used for synchronisation.
+    private boolean connectionLost  ;
+
 
 
     private static final String HELLO = "HELLO";
@@ -28,8 +33,8 @@ public class ClientHandler implements Runnable {
     /**
      * constructor
      *
-     * @param socket
-     * @param server
+     * @param socket the socket from the connection.
+     * @param server the server from which the clientHandler is initialized.
      */
     public ClientHandler(Socket socket, Server server) {
         this.socket = socket;
@@ -40,15 +45,12 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        connectionLost = false ;
     }
 
 
     /**
-     * Runs this operation.
-     * Reads the input and depending on this input with the switch command goes to the right output
-     * <p>
-     * hier mist nog een boolean die ervoor zorgt dat je in bepaalde situaties dingen niet kan (zoals een spel proberen te starten als je nog geen username is gegeven)
-     * De functies die dezelfde naam hebben als de input zijn nog niet af en of niet correct
+     * This is the run function. This will handler the incoming input from the client.
      */
     @Override
     public void run() {
@@ -61,60 +63,43 @@ public class ClientHandler implements Runnable {
                 if (line == null) {
                     break;
                 }
-                String[] splittedLine = line.split("~");
-                String command = splittedLine[0].toUpperCase();
-                System.out.println(command); // MOET OP HET EINDE NOG WEG MAAR VOOR NU HOUDEN
+                String[] splitLine = line.split("~");
+                String command = splitLine[0].toUpperCase();
+                System.out.println(command); // SHOULD BE REMOVED BUT FOR NOW KEEP IT SO YOU CAN SEE SOMETHING OF THE FLOW
                 System.out.println("the input line is :" + line);
                 switch (command) {
-                    case HELLO:
-                        hello();
-                        break;
-                    case USERNAME:
-                        username(splittedLine[1]);
-                        break;
-                    case QUEUE:
-                        queue();
-                        break;
-                    case PASS:
-                        pass();
-                        break;
-                    case MOVE:
-                        move(Integer.parseInt(splittedLine[2]), Integer.parseInt(splittedLine[3]));
-                        break;
-                    case QUIT:
-                        quit();
-                        break;
-                    default:
-                        System.out.println("Does not understand the import");
+                    case HELLO -> hello();
+                    case USERNAME -> username(splitLine[1]);
+                    case QUEUE -> queue();
+                    case PASS -> pass();
+                    case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
+                    case QUIT -> quit();
+                    default ->
+                            System.out.println("Does not understand the import"); // This is seen on the server output
                 }
 
             } catch (IOException e) {
-                System.out.println("Connection with a client is lost");
+                System.out.println("Connection with a client is lost"); //This is seen on the server output
                 break;
             }
         }
-
         close();
     }
 
 
-    public void close() {
-        try {
-            bR.close();
-            server.usernames.remove(myUsername);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
+    /**
+     * This is one case of the switch command. This will add this client to the queue to start a game. if a client is already in the queue he will be removed.
+     */
     private void queue() {
         server.addOrRemovePlayerFromQueue(this);
 
     }
 
+    /**
+     * This is case of the switch command.
+     * Checks if the username already exist. If already exist the user should give another username otherwise this is the username.
+     * @param username the given username by the client.
+     */
     private void username(String username) {
         if (!server.usernames.contains(username)) {
             this.myUsername = username;
@@ -127,14 +112,26 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * This is a case of the switch command.
+     * Sends a messages about this server to the client.
+     */
     private void hello() {
         sendMessage("WELCOME~This is the server van Ilana");
     }
 
+    /**
+     * This is a case of the switch command.
+     */
     private void pass() {
         setMove(null);
     }
 
+    /**
+     * This is a case of the switch command.
+     * @param row row
+     * @param col col
+     */
     private void move(int row, int col) {
         int[] value = new int[2] ;
         value[0] = row ;
@@ -144,21 +141,52 @@ public class ClientHandler implements Runnable {
 
     }
 
+    /**
+     * This is a case of the switch command.
+     * calls the function close.
+     */
     private void quit() {
         close();
     }
 
 
+    /**
+     * Closes the clientHandler nicely.
+     */
+    public void close() {
+        try {
+            bR.close();
+            server.usernames.remove(myUsername);
+            System.out.println("the connection is lost is set to true ");
+            connectionLost = true ;
+        } catch (IOException e) {
+            System.out.println("cannot close the client Handler");
+        }
+
+    }
+
+    /**
+     * Sends messages to the client.
+     * @param message the messages that sends to the client.
+     */
     public void sendMessage(String message) {
         pW.println(message);
         pW.flush();
     }
 
+    /**
+     * username getter
+     * @return username of the client.
+     */
     public String getMyUsername() {
         return myUsername;
     }
 
-
+    /**
+     * This function is used to get a given move from a client. THis is used by the gameGo.
+     * The move can only be returned if there is a move there, otherwise the thread will wait until value is read.
+     * @return int[] = row,col
+     */
     public synchronized int[] getMove() {
         while(valueRead){
            try {
@@ -172,7 +200,11 @@ public class ClientHandler implements Runnable {
         return currentMove;
     }
 
-    public synchronized void setMove(int[] val) {
+    /**
+     * This function is used by the clientHandler to set the given move of the game by the client. This move can then be reached throw getMove. THis can only be done if the there is no move that needs to be read yet.
+     * @param moveValue the move is given by the client.
+     */
+    public synchronized void setMove(int[] moveValue) {
         while(!valueRead){
             try{
                 wait();
@@ -181,13 +213,13 @@ public class ClientHandler implements Runnable {
             }
 
         }
-       if(val == null){
+       if(moveValue == null){
            currentMove = null ;
        }
        else {
            currentMove = new int[2];
-           currentMove[0] = val[0];
-           currentMove[1] = val[1];
+           currentMove[0] = moveValue[0];
+           currentMove[1] = moveValue[1];
        }
         valueRead=false ;
         notifyAll();
@@ -196,10 +228,23 @@ public class ClientHandler implements Runnable {
 
     /**
      * set value before a game and after a game is finished.
-     * @param valueRead
+     * This boolean is used for synchronisation.
+     * @param valueRead a boolean value that is true if there is a move to that can be read.
      */
     public void setValueRead(boolean valueRead) {
         this.valueRead = valueRead;
     }
+
+
+    /**
+     *
+     * @return returns true is there is no more connection with the client.
+     */
+
+    public boolean isConnectionLost() {
+        return connectionLost;
+    }
+
+
 }
 

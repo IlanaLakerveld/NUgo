@@ -15,12 +15,13 @@ public class ServerTUI {
         int port = getPortInput.getPort(false);
         Server server = new Server(port);
         server.start();
-        System.out.println("The serverport is " + server.getPort());
+        System.out.println("The server port is " + server.getPort());
 
 
+        // The server keeps running until the user types quit
         boolean quit = false;
         while (!quit) {
-            if (scanner.nextLine().equals("quit")) {
+            if (scanner.nextLine().equalsIgnoreCase("quit")) {
                 server.stop();
                 quit = true;
                 System.out.println("bye");

@@ -29,33 +29,36 @@ public class ClientTUI {
         System.out.println("Trying to connect with " + inputAddress + " on port : " + port);
 
         boolean wantToQuit = false;
-        var pr1 = new PipedReader();
+        PipedReader pipedReader = new PipedReader();
         try {
-            var pw1Piped = new PipedWriter(pr1);
+            PipedWriter pipedWriter = new PipedWriter(pipedReader);
 
-            Client client = new Client(addressSever, port, pr1);
-            PrintWriter pwr2PrintWriter = new PrintWriter(pw1Piped);
+            Client client = new Client(addressSever, port, pipedReader);
+            PrintWriter printWriter = new PrintWriter(pipedWriter);
             client.connect();
         while (!wantToQuit) {
             String message = scanner.nextLine();
             if (message.equals("quit")) {
                 wantToQuit = true;
                 client.close();
-                pwr2PrintWriter.close();
-                pr1.close();
-                pw1Piped.close();
+                printWriter.close();
+                pipedReader.close();
+                pipedWriter.close();
+
             }
             else if(message.toUpperCase().equals("GO")){
                 client.goToQueue();
             }
             else{
-                pwr2PrintWriter.println(message);
-                pwr2PrintWriter.flush();
+                printWriter.println(message);
+                printWriter.flush();
             }
 
         }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("you stopped the game please close the board window");
     }
 }

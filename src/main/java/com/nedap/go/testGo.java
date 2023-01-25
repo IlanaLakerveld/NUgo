@@ -1,9 +1,5 @@
 package com.nedap.go;
 
-import com.nedap.go.server.AbstractPlayer;
-import com.nedap.go.server.GameGo;
-import com.nedap.go.spel.StoneColour;
-
 public class testGo {
 
     public static void main(String[] args) {
