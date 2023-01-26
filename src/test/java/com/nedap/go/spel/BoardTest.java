@@ -185,6 +185,34 @@ public class BoardTest {
 
 
     }
+    @Test
+    public void testCaptured2() {
+        board.setField(2, 2, StoneColour.WHITE);
+        board.setField(2, 3, StoneColour.WHITE);
+        board.setField(2, 4, StoneColour.WHITE);
+        board.setField(3, 2, StoneColour.WHITE);
+        board.setField(3, 3, StoneColour.WHITE);
+        board.setField(4,3 ,StoneColour.WHITE);
+
+
+        board.setField(2, 1, StoneColour.BLACK);
+        board.setField(3, 1, StoneColour.BLACK);
+       board.setField(4, 2, StoneColour.BLACK);
+        board.setField(5, 3, StoneColour.BLACK);
+        board.setField(4, 4, StoneColour.BLACK);
+        board.setField(3, 4, StoneColour.BLACK);
+        board.setField(2, 5, StoneColour.BLACK);
+        board.setField(1, 4, StoneColour.BLACK);
+        board.setField(1, 3, StoneColour.BLACK);
+        board.setField(1, 2, StoneColour.BLACK);
+
+
+        List<int[]> list  ;
+        list = board.captured(3, 3);
+
+        assertEquals(list.size(),6,0.0);
+    }
+
 
 
 }

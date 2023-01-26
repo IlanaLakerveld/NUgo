@@ -7,41 +7,50 @@ import com.nedap.go.spel.StoneColour;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
 
+/**
+ * This is the class client. This communicates with the client handler.
+ */
 public class Client implements Runnable {
-    //    Scanner scanner ;
-    BufferedReader reader;
-
-
+    private BufferedReader reader;
     private int port;
     private InetAddress address;
     private BufferedReader bufferedReader;
     private PrintWriter printWriter;
     private Socket socket;
-
     private String name;
     private Player player;
     private boolean canStartAGame;
+
+
+
     private static final String WELCOME = "WELCOME";
     private static final String USERNAMETAKEN = "USERNAMETAKEN";
     private static final String JOINED = "JOINED";
     private static final String NEWGAME = "NEWGAME";
     private static final String MOVE = "MOVE";
-
     private static final String YOURTURN = "YOURTURN";
     private static final String INVALIDMOVE = "INVALIDMOVE";
     private static final String GAMEOVER = "GAMEOVER";
 
+    /**
+     * Constructor
+     *
+     * @param address The inetAddress of the server
+     * @param port    The port the server is listening on
+     * @param input   The input from the scanner to the client
+     */
     public Client(InetAddress address, int port, Reader input) {
         this.address = address;
         this.port = port;
-//        this.scanner = scanner;
         this.reader = new BufferedReader(input);
-        canStartAGame = false;
+        canStartAGame = false; // can only start a game when the handshake is done and is not already in a game
 
     }
 
+    /**
+     * Makes a connection with the server.
+     */
     public void connect() {
         try {
             socket = new Socket(address, port);
@@ -55,6 +64,9 @@ public class Client implements Runnable {
 
     }
 
+    /**
+     * Initiation of the handshake.
+     */
     private void handShake() {
         printWriter.println("HELLO~client description");
         printWriter.flush();
@@ -62,7 +74,8 @@ public class Client implements Runnable {
     }
 
     /**
-     * Runs this operation.
+     * Runs this operation. Stops when the is no connection anymore.
+     * Handles the input from the server.
      */
     @Override
     public void run() {
@@ -71,7 +84,6 @@ public class Client implements Runnable {
 
             try {
                 String line;
-
                 line = bufferedReader.readLine();
                 if (line == null) {
                     break;
@@ -83,37 +95,26 @@ public class Client implements Runnable {
                         System.out.println(splittedLine[1]);
                         System.out.println("please type your username");
                         name = reader.readLine();
-
-                        printWriter.println("USERNAME~" + name);
-                        printWriter.flush();
+                        sendMessage("USERNAME~" + name);
                         break;
                     case USERNAMETAKEN:
                         System.out.println(splittedLine[1]);
                         name = reader.readLine();
-
-                        printWriter.println("USERNAME~name");
-                        printWriter.flush();
+                        sendMessage("USERNAME~" + name);
                         break;
                     case JOINED:
                         System.out.println("you now joined the system if you want to play the game go type : GO");
                         canStartAGame = true;
                         break;
                     case NEWGAME:
-                        System.out.println("WELKOM TO THIS GAME");
-                        System.out.println(""+splittedLine[1]+" is black and "+splittedLine[2]+" is white");
-                        if (splittedLine[1].equals(name)) {
-                            newGame(StoneColour.BLACK);
-                        } else {
-                            newGame(StoneColour.WHITE);
-                        }
-                        canStartAGame = false;
+                        newGame(splittedLine[1], splittedLine[2]);
                         break;
                     case YOURTURN:
-                        yourturn();
+                        yourTurn();
                         break;
                     case INVALIDMOVE:
                         System.out.println("you send a illegal move try another move ");
-//                        yourturn();
+//                        yourTurn();
                         break;
                     case MOVE:
                         if (splittedLine[2].equals("PASS")) {
@@ -129,7 +130,7 @@ public class Client implements Runnable {
                         canStartAGame = true;
                         break;
                     default:
-                        System.out.println("default :"+ line );
+                        System.out.println("default :" + line);
                         break;
                 }
 
@@ -141,53 +142,133 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * This function handles the closing of the client nicely.
+     */
     public void close() {
+
+
         try {
             socket.close();
         } catch (IOException e) {
             System.out.println("unable to close the socket");
         }
         printWriter.close();
+        try {
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    private void newGame(StoneColour colour) {
-        player = new HumanPlayer(name, colour, reader);
+
+    /**
+     * This is a case of the switch command.
+     * Makes a player because the game is started.
+     *
+     * @param player1 first name server sends
+     * @param player2 second name server sends
+     */
+    private void newGame(String player1, String player2) {
+        System.out.println("WELKOM TO THIS GAME");
+        System.out.println("" + player1 + " is black and " + player2 + " is white");
+        System.out.println("Do you want to play with a computer player type : PC");
+        String playerType ;
+        try {
+            playerType = reader.readLine() ;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if( playerType.toUpperCase().equals("PC")){
+            if (player1.equals(name)) {
+                player = new ComputerPlayer(name, StoneColour.BLACK);
+            } else {
+                player = new ComputerPlayer(name, StoneColour.WHITE);
+            }
+
+        }
+        else {
+            if (player1.equals(name)) {
+                player = new HumanPlayer(name, StoneColour.BLACK, reader);
+            } else {
+                player = new HumanPlayer(name, StoneColour.WHITE, reader);
+            }
+        }
+        canStartAGame = false;
+
     }
 
-    private void yourturn() {
+    /**
+     * This is a case of the switch command.
+     * Asks player which move he wants to make.
+     * Invoke messeges sender to send the move to the player.
+     */
+    private void yourTurn() {
         Move move = player.determineMove();
         String message;
         if (move != null) {
             message = "MOVE~" + name + "~" + move.getRow() + "~" + move.getCol();
         } else {
             message = "PASS";
+
         }
         sendMessage(message);
     }
 
+
+    /**
+     * Sends to last made move to the player (which updates the board on the gui and board used to check validity of the move)
+     *
+     * @param row     row
+     * @param col     col
+     * @param ownMove true is it is a move made by this player
+     */
     private void move(int row, int col, boolean ownMove) {
         Move move;
         if (ownMove) {
             move = new Move(row, col, player.getColour());
         } else {
-            move = new Move(row, col, player.getColourOpponend());
+            move = new Move(row, col, player.getColourOpponent());
         }
         player.updateBoard(move);
     }
 
+
+    /**
+     * Sends the board update that the last move was pass.
+     */
     private void movePass() {
         player.updateBoard(null);
     }
 
+
+    /**
+     * Sends a message to the server that the player want to go to the queue.
+     */
+    public void goToQueue() {
+        sendMessage("QUEUE");
+    }
+
+    /**
+     * boolean to check is someone is may start a game .
+     *
+     * @return true if it is oke to start a game.
+     */
+    public boolean isAbleToStartAGame() {
+        return canStartAGame;
+    }
+
+    /**
+     * Sends messages to the server
+     *
+     * @param message the message that need to be sent to the server.
+     */
     private void sendMessage(String message) {
         printWriter.println(message);
         printWriter.flush();
 
     }
 
-    public void goToQueue() {
-        sendMessage("QUEUE");
-    }
-
-
 }
+

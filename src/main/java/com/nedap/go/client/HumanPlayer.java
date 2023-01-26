@@ -7,9 +7,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * This is the class Human player. This extends the class player.
+ */
 public class HumanPlayer extends Player {
 
-    BufferedReader reader;
+    private BufferedReader reader;
 
 
     /**
@@ -22,6 +25,10 @@ public class HumanPlayer extends Player {
         reader = new BufferedReader(input);
     }
 
+    /**
+     * Determines the move the human wants to make check if this is possible.
+     * @return The move the human wants to make.
+     */
     @Override
     public Move determineMove() {
         boolean moveOke = false;
@@ -33,7 +40,7 @@ public class HumanPlayer extends Player {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (pass.equals("pass")) {
+        if (pass == null || pass.equals("pass")) { /// ALS DISCONNECT TIJDENS WORD DAN NUL GESTUURD
             return null;
         }
         while (!moveOke) {
@@ -55,6 +62,10 @@ public class HumanPlayer extends Player {
     }
 
 
+    /**
+     * function that checks if the input is a number if it is not the case he asked for new input
+     * @return the required integer.
+     */
     private int checkIfItsAnInteger() {
         int number;
         while (true) {
@@ -64,7 +75,9 @@ public class HumanPlayer extends Player {
             } catch (NumberFormatException e) {
                 System.out.println("this is not a number please type a number");
             } catch (IOException e) {
+
                 System.out.println("you quited the game");
+//                return -1;
             }
 
         }

@@ -203,17 +203,19 @@ public class Game {
               continue;
             }
             StoneColour thirdSide = findColourSide(move.getRow(), move.getCol() + 1, false, false, true);
-            // false if C=empty || A=B=empty || (A=empty || A=C) || (B=empty || B=C)
-            // true if  C≠empty && (A≠empty || B≠empty) && (A≠empty || A≠C) && (B≠empty "" B≠C)
-            if(!thirdSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY))&& (!firstSide.equals(StoneColour.EMPTY) && !thirdSide.equals(firstSide))&& (!secondSide.equals(StoneColour.EMPTY) && !thirdSide.equals(secondSide)) ) {
+            // false if C=empty || A=B=empty || ((A=empty || A=C) && (B=empty || B=C))
+            // true if  C≠empty && (A≠empty || B≠empty) && (A≠empty && A≠C) || (B≠empty && B≠C)
+            if(!thirdSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY))&& ((!firstSide.equals(StoneColour.EMPTY) && !thirdSide.equals(firstSide)) || (!secondSide.equals(StoneColour.EMPTY) && !thirdSide.equals(secondSide)) )) {
                 continue;
             }
-            // false if D=empty || A=B=C=empty || (A=empty || A=C) || (B=empty || B=C) ||(C=empty || C=D)
-            // true  if D≠empty && (A≠empty || B≠empty || C≠empty) && (A≠empty && A≠D) && (B≠empty && B≠D) && (C≠empty && C≠D)
+//
+            // false if D=empty || A=B=C=empty || ((A=empty || A=C) && (B=empty || B=C) && (C=empty || C=D))
+            // true  if D≠empty && (A≠empty || B≠empty || C≠empty) && ((A≠empty && A≠D) || (B≠empty && B≠D) || (C≠empty && C≠D))
             StoneColour fourthSide = findColourSide(move.getRow(), move.getCol() - 1, false, false, false);
-            if(!fourthSide.equals(StoneColour.EMPTY )&& !(firstSide.equals(StoneColour.EMPTY)&&secondSide.equals(StoneColour.EMPTY)&& thirdSide.equals(StoneColour.EMPTY))&& (!firstSide.equals(StoneColour.EMPTY) && !fourthSide.equals(firstSide))&&( !secondSide.equals(StoneColour.EMPTY) && !fourthSide.equals(secondSide) )&&(!thirdSide.equals(StoneColour.EMPTY) && !fourthSide.equals(thirdSide))){
+            if(!fourthSide.equals(StoneColour.EMPTY )&& !(firstSide.equals(StoneColour.EMPTY)&&secondSide.equals(StoneColour.EMPTY)&& thirdSide.equals(StoneColour.EMPTY))&& ((!firstSide.equals(StoneColour.EMPTY) && !fourthSide.equals(firstSide)) || ( !secondSide.equals(StoneColour.EMPTY) && !fourthSide.equals(secondSide) )|| (!thirdSide.equals(StoneColour.EMPTY) && !fourthSide.equals(thirdSide)))){
                 continue;
             }
+
             // false if A≠empty || B≠empty || C≠empty || D≠empty
             // true if A=B=C=D=empty
             if (firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY)&&thirdSide.equals(StoneColour.EMPTY)&&fourthSide.equals(StoneColour.EMPTY)){

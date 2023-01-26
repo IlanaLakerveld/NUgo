@@ -133,10 +133,7 @@ public class ClientHandler implements Runnable {
      * @param col col
      */
     private void move(int row, int col) {
-        int[] value = new int[2] ;
-        value[0] = row ;
-        value[1] = col  ;
-        System.out.println(""+value[0]+value[1]);
+        int[] value = new int[]{row,col} ;
         setMove(value);
 
     }
@@ -157,8 +154,8 @@ public class ClientHandler implements Runnable {
         try {
             bR.close();
             server.usernames.remove(myUsername);
-            System.out.println("the connection is lost is set to true ");
-            connectionLost = true ;
+            System.out.println("the connection is lost is set to true "); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            setConnectionLost(true);
         } catch (IOException e) {
             System.out.println("cannot close the client Handler");
         }
@@ -188,7 +185,7 @@ public class ClientHandler implements Runnable {
      * @return int[] = row,col
      */
     public synchronized int[] getMove() {
-        while(valueRead){
+        while(valueRead && !connectionLost){
            try {
                wait();
            } catch (InterruptedException e) {
@@ -205,7 +202,7 @@ public class ClientHandler implements Runnable {
      * @param moveValue the move is given by the client.
      */
     public synchronized void setMove(int[] moveValue) {
-        while(!valueRead){
+        while(!valueRead ){
             try{
                 wait();
             } catch (InterruptedException e) {
@@ -217,9 +214,7 @@ public class ClientHandler implements Runnable {
            currentMove = null ;
        }
        else {
-           currentMove = new int[2];
-           currentMove[0] = moveValue[0];
-           currentMove[1] = moveValue[1];
+           currentMove = new int[]{moveValue[0], moveValue[1]};
        }
         valueRead=false ;
         notifyAll();
@@ -245,6 +240,9 @@ public class ClientHandler implements Runnable {
         return connectionLost;
     }
 
-
+    private synchronized void setConnectionLost(boolean connectionLost) {
+        this.connectionLost = connectionLost;
+        notifyAll();
+    }
 }
 

@@ -10,6 +10,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+/**
+ * This is the client TUI run this method to start a client.
+ */
 public class ClientTUI {
 
 
@@ -36,6 +39,8 @@ public class ClientTUI {
             Client client = new Client(addressSever, port, pipedReader);
             PrintWriter printWriter = new PrintWriter(pipedWriter);
             client.connect();
+
+            // reads text input if its quit or go it does something otherwise sends it to the client
         while (!wantToQuit) {
             String message = scanner.nextLine();
             if (message.equals("quit")) {
@@ -47,7 +52,12 @@ public class ClientTUI {
 
             }
             else if(message.toUpperCase().equals("GO")){
-                client.goToQueue();
+                if(client.isAbleToStartAGame()) {
+                    client.goToQueue();
+                }
+                else{
+                    System.out.println("you can not start a game because you are already in a game or needs to handle the handshake first");
+                }
             }
             else{
                 printWriter.println(message);
@@ -58,7 +68,7 @@ public class ClientTUI {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        // window does not close itself
         System.out.println("you stopped the game please close the board window");
     }
 }

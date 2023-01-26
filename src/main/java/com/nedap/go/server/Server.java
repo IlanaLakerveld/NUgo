@@ -136,8 +136,9 @@ public class Server implements Runnable {
      * @param cl client handler.
      */
     public synchronized void addOrRemovePlayerFromQueue(ClientHandler cl){
-        if(!playerQueue.isEmpty() && playerQueue.contains(cl.getMyUsername())){
-            playerQueue.remove(cl.getMyUsername());
+        if(!playerQueue.isEmpty() && playerQueue.contains(cl)){
+            playerQueue.remove(cl);
+            System.out.println(cl.getMyUsername() + " is removed from the list");
         }
         else {
             playerQueue.add(cl);
@@ -145,5 +146,11 @@ public class Server implements Runnable {
         }
     }
 
-
+    /**
+     *
+     * @return true if the server is active
+     */
+    public boolean isActive() {
+        return active;
+    }
 }
