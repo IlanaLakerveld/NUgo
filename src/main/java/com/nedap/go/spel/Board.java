@@ -155,10 +155,10 @@ public class Board {
         // check all directions
         list.add(new int[]{row, col});
 
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, new ArrayList<>()));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, new ArrayList<>()));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, new ArrayList<>()));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, new ArrayList<String>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, new ArrayList<String>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, new ArrayList<String>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, new ArrayList<String>()));
 
         // Because it is an array you can not simply see the duplicates,
         // therefore first made it a string then you can see the duplicates and can remove them with a hashmap after removing the hashmap is returned to an array of strings
@@ -218,7 +218,7 @@ public class Board {
      * @param horizontal true is you want to check of the rows, false if you want to check the columns
      * @param rightSide  true if you want to check the right side, false is you want to check the left side
      * @param down       true is you want to check the field below true is you want to check the field up
-     * @param loopChecker saves places where you have been so that you don't have an infinate loop
+     * @param loopChecker saves places where you have been so that you don't have an infinite loop
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
     private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down,  List loopChecker ) {

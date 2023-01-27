@@ -35,7 +35,7 @@ public class ClientTUI {
 
             }
         }
-        System.out.println("Trying to connect with " + addressSever  + " on port : " + port);
+        System.out.println("Trying to connect with " + addressSever + " on port : " + port);
 
         boolean wantToQuit = false;
         PipedReader pipedReader = new PipedReader();
@@ -49,7 +49,10 @@ public class ClientTUI {
             // reads text input if its quit or go it does something otherwise sends it to the client
             while (!wantToQuit) {
                 String message = scanner.nextLine();
-                if (message.toLowerCase().equals("quit")) {
+                if (message.contains("~")) {
+                    System.out.println("you are not allowed to use the ~");
+
+                } else if (message.toLowerCase().equals("quit")) {
                     wantToQuit = true;
                     client.close();
                     printWriter.close();
@@ -62,6 +65,8 @@ public class ClientTUI {
                     } else {
                         System.out.println("you can not start a game because you are already in a game or needs to handle the handshake first");
                     }
+                } else if (message.toLowerCase().equals("help")) {
+                    System.out.println();
                 } else {
                     printWriter.println(message);
                     printWriter.flush();

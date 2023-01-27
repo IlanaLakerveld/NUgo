@@ -28,7 +28,7 @@ public abstract class Player {
         this.name = name;
         this.colour =colour;
         game = new Game(new Board());
-        int boardSize = game.board.DIM ;
+        int boardSize = Board.DIM ;
         gogui = new GoGuiIntegrator(true, false, boardSize);
         gogui.startGUI();
         gogui.setBoardSize(boardSize);

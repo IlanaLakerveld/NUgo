@@ -65,7 +65,6 @@ public class ClientHandler implements Runnable {
                 }
                 String[] splitLine = line.split("~");
                 String command = splitLine[0].toUpperCase();
-                System.out.println(command); // SHOULD BE REMOVED BUT FOR NOW KEEP IT SO YOU CAN SEE SOMETHING OF THE FLOW
                 System.out.println("the input line is :" + line);
                 switch (command) {
                     case HELLO -> hello();
@@ -75,7 +74,7 @@ public class ClientHandler implements Runnable {
                     case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
                     case QUIT -> quit();
                     default ->
-                            System.out.println("Does not understand the import"); // This is seen on the server output
+                            System.out.println("Does not understand the import "+line); // This is seen on the server output
                 }
 
             } catch (IOException e) {
@@ -154,7 +153,7 @@ public class ClientHandler implements Runnable {
         try {
             bR.close();
             server.usernames.remove(myUsername);
-            System.out.println("the connection is lost is set to true "); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            System.out.println("the connection with " + myUsername +" is lost"); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             setConnectionLost(true);
         } catch (IOException e) {
             System.out.println("cannot close the client Handler");
@@ -189,7 +188,7 @@ public class ClientHandler implements Runnable {
            try {
                wait();
            } catch (InterruptedException e) {
-               throw new RuntimeException(e);
+               System.out.println("Something goes wrong with synchronisation");
            }
         }
         valueRead= true ;
@@ -206,7 +205,7 @@ public class ClientHandler implements Runnable {
             try{
                 wait();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                System.out.println("Something goes wrong with synchronisation");
             }
 
         }
@@ -240,6 +239,10 @@ public class ClientHandler implements Runnable {
         return connectionLost;
     }
 
+    /**
+     * used to handle the case the connection is lost on the moment the game is waiting for a move
+     * @param connectionLost boolean value that is true if the connection is lost
+     */
     private synchronized void setConnectionLost(boolean connectionLost) {
         this.connectionLost = connectionLost;
         notifyAll();

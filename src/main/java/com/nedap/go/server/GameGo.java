@@ -6,7 +6,6 @@ public class GameGo implements Runnable {
     private ServerPlayer playerBlack;
     private ServerPlayer playerWhite;
     private ServerPlayer currentPlayer;
-
     private int boardSize;
     private Game game;
 
@@ -29,7 +28,7 @@ public class GameGo implements Runnable {
      */
     public void run() {
         game = new Game(new Board());
-        readBoolean(); //begin no one had read a move
+        setReadBoolean(); //begin no one had read a move
 
         currentPlayer = playerBlack; // player 1 ( Black ) always starts
         boolean gameStop = false;
@@ -70,7 +69,7 @@ public class GameGo implements Runnable {
             sendMessages("GAMEOVER~the player with stone colour~" + game.isWinner());
         }
 
-        readBoolean();  //begin no one had read a move;
+        setReadBoolean();  //begin no one had read a move;
 
     }
 
@@ -90,7 +89,7 @@ public class GameGo implements Runnable {
     /**
      * This is used for synchronisation.
      */
-    public void readBoolean() {
+    private void setReadBoolean() {
         playerBlack.setReadBooleanToFalse();
         playerWhite.setReadBooleanToFalse();
     }
@@ -99,7 +98,7 @@ public class GameGo implements Runnable {
      * This function sends messages to all the players of the game
      * @param message the messages that is sent to the players
      */
-    public void sendMessages(String message) {
+    private void sendMessages(String message) {
         playerWhite.sendMessage(message);
         playerBlack.sendMessage(message);
     }

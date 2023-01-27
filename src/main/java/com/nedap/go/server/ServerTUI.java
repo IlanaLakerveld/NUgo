@@ -1,7 +1,6 @@
 package com.nedap.go.server;
 
 import com.nedap.go.getPortInput;
-
 import java.util.Scanner;
 
 /**

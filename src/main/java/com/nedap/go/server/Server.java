@@ -20,9 +20,6 @@ public class Server implements Runnable {
     private Thread socketThread;
     private Queue playerQueue = new LinkedList();
     public List<Object> usernames = new ArrayList<>();
-
-
-
     private List<ClientHandler> clientHandlerList = new ArrayList();
 
     /**
