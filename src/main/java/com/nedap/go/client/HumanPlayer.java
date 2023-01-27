@@ -53,7 +53,10 @@ public class HumanPlayer extends Player {
             move = new Move(row, col, colour);
             if (game.isValidMove(move)) {
                 moveOke = true;
-            } else {
+            }else if(move.getRow()==-1000 || move.getCol()==-1000){
+                return null;// in this case the player disconnected
+            }
+            else {
                 System.out.println("this is not a valid move");
             }
         }
@@ -77,7 +80,7 @@ public class HumanPlayer extends Player {
             } catch (IOException e) {
 
                 System.out.println("you quited the game");
-//                return -1;
+                return -1000;
             }
 
         }

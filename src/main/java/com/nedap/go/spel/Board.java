@@ -129,7 +129,8 @@ public class Board {
     public boolean isSurrounded(int row, int col) {
         StoneColour stone = getField(row, col);
         // check al the neighbours of the stone
-        if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
+
+        if (checkerSideAreCaptured(row + 1, col, stone, true, true, false, new ArrayList<>()) && checkerSideAreCaptured(row - 1, col, stone, true, false, false, new ArrayList<>()) && checkerSideAreCaptured(row, col + 1, stone, false, false, true, new ArrayList<>()) && checkerSideAreCaptured(row, col - 1, stone, false, false, false, new ArrayList<>())) {
             return true;
         }
         return false;
@@ -154,11 +155,23 @@ public class Board {
         // check all directions
         list.add(new int[]{row, col});
 
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, "" + row + col));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, "" + row + col));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, "" + row + col));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, "" + row + col));
-        List<int[]> listWithoutDuplicates = new ArrayList<>(new HashSet<>(list));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, new ArrayList<>()));
+
+        // Because it is an array you can not simply see the duplicates,
+        // therefore first made it a string then you can see the duplicates and can remove them with a hashmap after removing the hashmap is returned to an array of strings
+        List<String> listString = new ArrayList<>();
+        for(int[] ints : list){
+            listString.add(""+ints[0]+"~"+ints[1]);
+        }
+        List<String> listWithoutDuplicatesString = new ArrayList<>(new HashSet<>(listString));
+        List<int[]> listWithoutDuplicates = new ArrayList<>();
+        for(String stringLine:listWithoutDuplicatesString){
+            String[] s = stringLine.split("~");
+            listWithoutDuplicates.add(new int[]{Integer.parseInt(s[0]),Integer.parseInt(s[1])});
+        }
         return listWithoutDuplicates;
     }
 
@@ -166,26 +179,30 @@ public class Board {
      * @param row           row position of the place you are looking at
      * @param col           col position of the place you are looking at
      * @param colour        colour of the captured stone
-     * @param startPosition the position from where you are trying to get the field that needs to be captured, this position is needed to prevent infinite loops.
+     * @param loopList      This is a list created to contain places the function has been to prevent infinite loops.
      * @return a list of fields that need to be removed
      */
-    private List<int[]> listOfFieldThatNeedsToBeRemoved(int row, int col, StoneColour colour, String startPosition) {
+    private List<int[]> listOfFieldThatNeedsToBeRemoved(int row, int col, StoneColour colour, List loopList) {
         List<int[]> list = new ArrayList<int[]>();
         if (!isField(row, col) || getField(row, col) != colour) {
             return list;
         }
         list.add(new int[]{row, col});
-        if (!startPosition.equals("" + (row + 1) + col)) {
-            list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, "" + row + col));
+        if (!loopList.contains("" + (row + 1) + col)) {
+            loopList.add("" + (row + 1) + col);
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, loopList));
         }
-        if (!startPosition.equals("" + (row - 1) + col)) {
-            list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, "" + row + col));
+        if (!loopList.contains("" + (row - 1) + col)) {
+            loopList.add("" + (row - 1) + col);
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, loopList));
         }
-        if (!startPosition.equals("" + row + (col + 1))) {
-            list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, "" + row + col));
+        if (!loopList.contains("" + row + (col + 1))) {
+            loopList.add("" + row + (col + 1));
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, loopList));
         }
-        if (!startPosition.equals("" + row + (col - 1))) {
-            list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, "" + row + col));
+        if (!loopList.contains("" + row + (col - 1))) {
+            loopList.add("" + row + (col - 1));
+            list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, loopList));
         }
         return list;
     }
@@ -201,9 +218,10 @@ public class Board {
      * @param horizontal true is you want to check of the rows, false if you want to check the columns
      * @param rightSide  true if you want to check the right side, false is you want to check the left side
      * @param down       true is you want to check the field below true is you want to check the field up
+     * @param loopChecker saves places where you have been so that you don't have an infinate loop
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
-    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down) {
+    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down,  List loopChecker ) {
 
         if (!isField(row, col)) {
             return true;
@@ -211,19 +229,24 @@ public class Board {
             return false;
         } else if (getField(row, col) != StoneColour.EMPTY && getField(row, col) != stone) {
             return true;
-        } else {
 
+        }
+        else if(loopChecker.contains(""+row+col))
+        {
+        return true;
+        }else {
+            loopChecker.add(""+row+col);
             if (horizontal) {
                 if (rightSide) {
 
-                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false,loopChecker) && checkerSideAreCaptured(row, col + 1, stone, false, false, true,loopChecker) && checkerSideAreCaptured(row, col - 1, stone, false, false, false,loopChecker)) {
                         return true;
                     } else {
                         return false;
                     }
 
                 } else {
-                    if (checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
+                    if (checkerSideAreCaptured(row - 1, col, stone, true, false, false,loopChecker) && checkerSideAreCaptured(row, col + 1, stone, false, false, true,loopChecker) && checkerSideAreCaptured(row, col - 1, stone, false, false, false,loopChecker)) {
                         return true;
                     } else {
                         return false;
@@ -231,13 +254,13 @@ public class Board {
                 }
             } else {
                 if (down) {
-                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col + 1, stone, false, false, true)) {
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false,loopChecker) && checkerSideAreCaptured(row - 1, col, stone, true, false, false,loopChecker) && checkerSideAreCaptured(row, col + 1, stone, false, false, true,loopChecker)) {
                         return true;
                     } else {
                         return false;
                     }
                 } else {
-                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false) && checkerSideAreCaptured(row - 1, col, stone, true, false, false) && checkerSideAreCaptured(row, col - 1, stone, false, false, false)) {
+                    if (checkerSideAreCaptured(row + 1, col, stone, true, true, false,loopChecker) && checkerSideAreCaptured(row - 1, col, stone, true, false, false,loopChecker) && checkerSideAreCaptured(row, col - 1, stone, false, false, false,loopChecker)) {
                         return true;
                     } else {
                         return false;
@@ -246,6 +269,7 @@ public class Board {
             }
         }
     }
+
 
 
 }

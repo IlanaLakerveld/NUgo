@@ -59,7 +59,7 @@ public class Client implements Runnable {
             Thread clientThread = new Thread(this);
             clientThread.start();
         } catch (IOException e) {
-            System.out.println("Sorry, unable to make an connection");
+            System.out.println("Sorry, unable to make an connection. ");
         }
 
     }
@@ -150,15 +150,21 @@ public class Client implements Runnable {
 
         try {
             socket.close();
+            printWriter.close();
         } catch (IOException e) {
             System.out.println("unable to close the socket");
         }
-        printWriter.close();
+        catch (NullPointerException e){
+           // This is if never been open.
+            System.out.println(" ");
+        }
+
         try {
             reader.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("unable to close the reader");
         }
+
 
     }
 
@@ -180,7 +186,7 @@ public class Client implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if( playerType.toUpperCase().equals("PC")){
+        if( playerType.equalsIgnoreCase("PC")){
             if (player1.equals(name)) {
                 player = new ComputerPlayer(name, StoneColour.BLACK);
             } else {
@@ -202,7 +208,7 @@ public class Client implements Runnable {
     /**
      * This is a case of the switch command.
      * Asks player which move he wants to make.
-     * Invoke messeges sender to send the move to the player.
+     * Invoke messages sender to send the move to the player.
      */
     private void yourTurn() {
         Move move = player.determineMove();

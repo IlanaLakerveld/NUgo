@@ -141,6 +141,8 @@ public class BoardTest {
         board.setField(3, 3, StoneColour.BLACK);
         board.setField(3, 2, StoneColour.BLACK);
         board.setField(2, 1, StoneColour.BLACK);
+        assertFalse(board.isSurrounded(2, 2));
+
         board.setField(1, 1, StoneColour.BLACK);
 
         assertTrue(board.isSurrounded(2, 2));
@@ -148,8 +150,8 @@ public class BoardTest {
 
         board.setField(2, 3, StoneColour.EMPTY);
         assertFalse(board.isSurrounded(2, 2));
-
-
+        board.setField(2, 4, StoneColour.EMPTY);
+        assertFalse(board.isSurrounded(2, 2));
     }
 
     @Test
@@ -176,12 +178,12 @@ public class BoardTest {
         List<int[]> list  ;
         list = board.captured(2, 2);
 
-        assertEquals(list.size(),4,0.0);
+        assertEquals(4,list.size(),0.0);
 
         List<int[]> list2  ;
         list2 = board.captured(2, 3);
 
-        assertEquals(list2.size(),4,0.0);
+        assertEquals(4,list2.size(),0.0);
 
 
     }
