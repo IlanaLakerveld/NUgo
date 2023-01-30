@@ -131,8 +131,8 @@ public class GameTest {
 
         Map<StoneColour, Integer> score = game.getScore();
         // 44 and 36 are the results as calculated in https://en.wikipedia.org/wiki/Rules_of_Go#Area_scoring
-        assertEquals(score.get(StoneColour.BLACK)  ,44,0.0);
-        assertEquals(score.get(StoneColour.WHITE),36,0.0);
+        assertEquals(44, score.get(StoneColour.BLACK)  ,0.0);
+        assertEquals(36,score.get(StoneColour.WHITE),0.0);
         assertEquals(game.isWinner(),StoneColour.BLACK);
 
 

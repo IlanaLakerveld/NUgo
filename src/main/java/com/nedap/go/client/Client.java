@@ -1,6 +1,7 @@
 package com.nedap.go.client;
 
 
+import com.nedap.go.IncorrectServerClientInputException;
 import com.nedap.go.Protocol;
 import com.nedap.go.spel.Move;
 import com.nedap.go.spel.StoneColour;
@@ -80,7 +81,7 @@ public class Client implements Runnable {
      * Handles the input from the server.
      */
     @Override
-    public void run() {
+    public void run()  {
         handShake();
         while (!socket.isClosed()) {
 
@@ -93,47 +94,16 @@ public class Client implements Runnable {
                 String[] splittedLine = line.split("~");
                 String command = splittedLine[0].toUpperCase();
                 switch (command) {
-                    case WELCOME:
-                        System.out.println(splittedLine[1]);
-                        System.out.println("please type your username");
-                        name = reader.readLine();
-                        sendMessage("USERNAME" + Protocol.delimiter + name);
-                        break;
-                    case USERNAMETAKEN:
-                        System.out.println(splittedLine[1]);
-                        name = reader.readLine();
-                        sendMessage("USERNAME" + Protocol.delimiter + name);
-                        break;
-                    case JOINED:
-                        System.out.println("you now joined the system if you want to play the game go type : GO");
-                        canStartAGame = true;
-                        break;
-                    case NEWGAME:
-                        newGame(splittedLine[1], splittedLine[2]);
-                        break;
-                    case YOURTURN:
-                        yourTurn();
-                        break;
-                    case INVALIDMOVE:
-                        System.out.println("you send a illegal move try another move ");
-//                        yourTurn();
-                        break;
-                    case MOVE:
-                        if (splittedLine[2].equals("PASS")) {
-                            movePass();
-                        } else if (splittedLine[1].equals(name)) {
-                            move(Integer.parseInt(splittedLine[2]), Integer.parseInt(splittedLine[3]), true);
-                        } else {
-                            move(Integer.parseInt(splittedLine[2]), Integer.parseInt(splittedLine[3]), false);
-                        }
-                        break;
-                    case GAMEOVER:
-                        System.out.println("Game over  because: " + splittedLine[1] + " the winner is: " + splittedLine[2]);
-                        canStartAGame = true;
-                        break;
-                    default:
-                        System.out.println("Do not understand this line :" + line);
-                        break;
+                    case WELCOME -> welcome(splittedLine[1]);
+                    case USERNAMETAKEN -> usernameTaken(splittedLine[1]);
+                    case JOINED -> joined();
+                    case NEWGAME -> newGame(splittedLine[1], splittedLine[2]);
+                    case YOURTURN -> yourTurn();
+                    case INVALIDMOVE -> invalidMove();
+                    case MOVE -> switchMove(splittedLine);
+                    case GAMEOVER -> gameOver(splittedLine[1], splittedLine[2]);
+//                    default -> System.out.println("Do not understand this line :" + line);
+                    default -> throw new IncorrectServerClientInputException("Do not understand this line :" + line) ;
                 }
 
             } catch (IOException e) {
@@ -207,22 +177,107 @@ public class Client implements Runnable {
 
     /**
      * This is a case of the switch command.
+     * Tells the user that the game is over and why
+     * @param reason the game is stopped
+     * @param winner the winner of the game
+     */
+    private void gameOver(String reason, String winner) {
+        System.out.println("Game over  because: " + reason + " the winner is: " + winner);
+        canStartAGame = true;
+    }
+
+    private void switchMove(String[] splittedLine ) {
+        if (splittedLine[2].equals("PASS")) {
+            movePass();
+        } else if (splittedLine[1].equals(name)) {
+            move(Integer.parseInt(splittedLine[2]), Integer.parseInt(splittedLine[3]), true);
+        } else {
+            move(Integer.parseInt(splittedLine[2]), Integer.parseInt(splittedLine[3]), false);
+        }
+
+    }
+
+    /**
+     * This is a case of the switch command.
+     * Asks for the username.
+     *
+     * @param input string input from the server
+     */
+    private void welcome(String input) {
+        System.out.println(input);
+        System.out.println("please type your username");
+        try {
+            name = reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        sendMessage("USERNAME" + Protocol.delimiter + name);
+    }
+
+
+    /**
+     * This is a case of the switch command.
+     * Aks for new username if the username is taken
+     *
+     * @param input input string from the server
+     */
+    private void usernameTaken(String input) {
+        System.out.println(input);
+        try {
+            name = reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        sendMessage("USERNAME" + Protocol.delimiter + name);
+
+
+    }
+
+    /**
+     * This is a case of the switch command.
+     * Tells the user it can now join the queue.
+     */
+    private void joined() {
+        System.out.println("you now joined the system if you want to play the game go type : GO");
+        canStartAGame = true;
+    }
+
+
+    /**
+     * This is a case of the switch command.
+     * Tells the user the move was invalid.
+     */
+    private void invalidMove() {
+        System.out.println("you send a illegal move try another move ");
+//                        yourTurn();
+
+    }
+
+    /**
+     * This is a case of the switch command.
      * Asks player which move he wants to make.
      * Invoke messages sender to send the move to the player.
      */
     private void yourTurn() {
-        Move move = player.determineMove();
-        String message;
-        if (move == null) {
 
-            message = "PASS";
+        Move move = null;
 
-        } else if (move.getCol() == -1) {
-            message = "QUIT";
-        } else  { //move != null
-            message = "MOVE" + Protocol.delimiter + name + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
+        try {
+            move = player.determineMove();
+            String message;
+            if (move == null) {
+
+                message = "PASS";
+
+
+            } else { //move != null
+                message = "MOVE" + Protocol.delimiter + name + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
+            }
+            sendMessage(message);
+
+        } catch (QuitGameException e) {
+            sendMessage("QUIT");
         }
-        sendMessage(message);
     }
 
 

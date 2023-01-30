@@ -29,7 +29,6 @@ public class ComputerPlayer extends Player {
     private Move getValidMove(List<int[]> possibleMoves) {
         if (possibleMoves.size() > 0) {
             int randomInt = (int) (Math.random() * possibleMoves.size());
-            System.out.println(randomInt);
             Move move = new Move(possibleMoves.get(randomInt)[0], possibleMoves.get(randomInt)[1], colour);
             if (game.isValidMove(move)) {
                 return move;

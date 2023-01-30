@@ -45,6 +45,7 @@ public class ClientTUI {
             Client client = new Client(addressSever, port, pipedReader);
             PrintWriter printWriter = new PrintWriter(pipedWriter);
             boolean connectionCorrect = client.connect();
+            System.out.println("If you need help type help. If you want to quit type quit");
 
             // reads text input if its quit or go it does something otherwise sends it to the client
             while (!wantToQuit && connectionCorrect) {
@@ -66,7 +67,15 @@ public class ClientTUI {
                         System.out.println("you can not start a game because you are already in a game or needs to handle the handshake first");
                     }
                 } else if (message.toLowerCase().equals("help")) {
-                    System.out.println();
+                    System.out.print("""
+                            Hello! to play a game first the username needs to be unique and correct. 
+                            when you want to play a game type GO
+                            when you want do not want to be waiting for a game anymore but you are already in queue type GO to go out of the queue
+                            when you are in the game wait until there is told what you want to do 
+                            if you want to quit type quit
+                            NEVER use ~ in anything :) 
+             
+                            """);
                 } else {
                     printWriter.println(message);
                     printWriter.flush();

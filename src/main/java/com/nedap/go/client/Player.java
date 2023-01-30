@@ -41,7 +41,7 @@ public abstract class Player {
      * Determine which move the person wants to make
      * @return move that person wants to make
      */
-    public abstract Move determineMove();
+    public abstract Move determineMove() throws QuitGameException;
 
     /**
      * updates the board so player knows al the moves that are on the board and update the gui

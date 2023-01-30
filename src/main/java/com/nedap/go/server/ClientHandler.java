@@ -1,5 +1,6 @@
 package com.nedap.go.server;
 
+import com.nedap.go.IncorrectServerClientInputException;
 import com.nedap.go.Protocol;
 
 import java.io.BufferedReader;
@@ -20,9 +21,8 @@ public class ClientHandler implements Runnable {
 
     private String myUsername;
     private int[] currentMove;
-    private boolean valueRead ; //This boolean is used for synchronisation.
-    private boolean connectionLost  ;
-
+    private boolean valueRead; //This boolean is used for synchronisation.
+    private boolean connectionLost;
 
 
     private static final String HELLO = "HELLO";
@@ -47,7 +47,7 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        connectionLost = false ;
+        connectionLost = false;
     }
 
 
@@ -76,13 +76,14 @@ public class ClientHandler implements Runnable {
                     case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
                     case QUIT -> quit();
                     default ->
-                            System.out.println("Does not understand the import "+line); // This is seen on the server output
+                            throw new IncorrectServerClientInputException("Does not understand the import " + line) ;
                 }
 
             } catch (IOException e) {
                 System.out.println("Connection with a client is lost"); //This is seen on the server output
                 break;
             }
+
         }
         close();
     }
@@ -99,6 +100,7 @@ public class ClientHandler implements Runnable {
     /**
      * This is case of the switch command.
      * Checks if the username already exist. If already exist the user should give another username otherwise this is the username.
+     *
      * @param username the given username by the client.
      */
     private void username(String username) {
@@ -108,7 +110,7 @@ public class ClientHandler implements Runnable {
             sendMessage("JOINED");
 
         } else {
-            sendMessage("USERNAMETAKEN"+ Protocol.delimiter +"username is already taken please use another username");
+            sendMessage("USERNAMETAKEN" + Protocol.delimiter + "username is already taken please use another username");
         }
 
     }
@@ -118,7 +120,7 @@ public class ClientHandler implements Runnable {
      * Sends a messages about this server to the client.
      */
     private void hello() {
-        sendMessage("WELCOME"+Protocol.delimiter+"This is the server van Ilana");
+        sendMessage("WELCOME" + Protocol.delimiter + "This is the server van Ilana");
     }
 
     /**
@@ -130,11 +132,12 @@ public class ClientHandler implements Runnable {
 
     /**
      * This is a case of the switch command.
+     *
      * @param row row
      * @param col col
      */
     private void move(int row, int col) {
-        int[] value = new int[]{row,col} ;
+        int[] value = new int[]{row, col};
         setMove(value);
 
     }
@@ -155,7 +158,7 @@ public class ClientHandler implements Runnable {
         try {
             bR.close();
             server.usernames.remove(myUsername);
-            System.out.println("The connection with " + myUsername +" is lost"); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            System.out.println("The connection with " + myUsername + " is lost"); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             setConnectionLost(true);
         } catch (IOException e) {
             System.out.println("cannot close the client Handler");
@@ -165,6 +168,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Sends messages to the client.
+     *
      * @param message the messages that sends to the client.
      */
     public void sendMessage(String message) {
@@ -174,6 +178,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * username getter
+     *
      * @return username of the client.
      */
     public String getMyUsername() {
@@ -183,41 +188,42 @@ public class ClientHandler implements Runnable {
     /**
      * This function is used to get a given move from a client. THis is used by the gameGo.
      * The move can only be returned if there is a move there, otherwise the thread will wait until value is read.
+     *
      * @return int[] = row,col
      */
     public synchronized int[] getMove() {
-        while(valueRead && !connectionLost){
-           try {
-               wait();
-           } catch (InterruptedException e) {
-               System.out.println("Something goes wrong with synchronisation");
-           }
+        while (valueRead && !connectionLost) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                System.out.println("Something goes wrong with synchronisation");
+            }
         }
-        valueRead= true ;
+        valueRead = true;
         notifyAll();
         return currentMove;
     }
 
     /**
      * This function is used by the clientHandler to set the given move of the game by the client. This move can then be reached throw getMove. THis can only be done if the there is no move that needs to be read yet.
+     *
      * @param moveValue the move is given by the client.
      */
     public synchronized void setMove(int[] moveValue) {
-        while(!valueRead ){
-            try{
+        while (!valueRead) {
+            try {
                 wait();
             } catch (InterruptedException e) {
                 System.out.println("Something goes wrong with synchronisation");
             }
 
         }
-       if(moveValue == null){
-           currentMove = null ;
-       }
-       else {
-           currentMove = new int[]{moveValue[0], moveValue[1]};
-       }
-        valueRead=false ;
+        if (moveValue == null) {
+            currentMove = null;
+        } else {
+            currentMove = new int[]{moveValue[0], moveValue[1]};
+        }
+        valueRead = false;
         notifyAll();
     }
 
@@ -225,6 +231,7 @@ public class ClientHandler implements Runnable {
     /**
      * set value before a game and after a game is finished.
      * This boolean is used for synchronisation.
+     *
      * @param valueRead a boolean value that is true if there is a move to that can be read.
      */
     public void setValueRead(boolean valueRead) {
@@ -233,7 +240,6 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     *
      * @return returns true is there is no more connection with the client.
      */
 
@@ -243,6 +249,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * used to handle the case the connection is lost on the moment the game is waiting for a move
+     *
      * @param connectionLost boolean value that is true if the connection is lost
      */
     private synchronized void setConnectionLost(boolean connectionLost) {
