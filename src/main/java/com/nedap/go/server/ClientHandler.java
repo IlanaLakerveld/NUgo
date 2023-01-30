@@ -141,10 +141,10 @@ public class ClientHandler implements Runnable {
 
     /**
      * This is a case of the switch command.
-     * calls the function close.
+     * The clients tells the server that it is quitting.
      */
     private void quit() {
-        close();
+        setConnectionLost(true);
     }
 
 

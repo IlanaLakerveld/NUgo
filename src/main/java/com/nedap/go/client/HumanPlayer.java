@@ -40,7 +40,10 @@ public class HumanPlayer extends Player {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (pass == null || pass.equals("pass")) { /// ALS DISCONNECT TIJDENS WORD DAN NUL GESTUURD
+        if (pass == null ) { /// ALS DISCONNECT TIJDENS WORD DAN NUL GESTUURD
+            return new Move(-1,-1,StoneColour.EMPTY);
+        }
+        else if(pass.equals("pass")){
             return null;
         }
         while (!moveOke) {
@@ -54,7 +57,7 @@ public class HumanPlayer extends Player {
             if (game.isValidMove(move)) {
                 moveOke = true;
             }else if(move.getRow()==-1000 || move.getCol()==-1000){
-                return null;// in this case the player disconnected
+                return new Move(-1,-1,StoneColour.EMPTY);// in this case the player disconnected
             }
             else {
                 System.out.println("this is not a valid move");

@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class Game {
 
-    public Board board;
+    private Board board;
 
     private List<Board> listPreviousBoardStates = new ArrayList<>();
 
@@ -29,6 +29,10 @@ public class Game {
         this.board = board;
     }
 
+
+    public Board getBoard() {
+        return board;
+    }
 
     /**
      * A game is ended if : there is no more space left on the board, there are two passes(indicated by null in listPreviousBoardStates ) or manually when someone left the game

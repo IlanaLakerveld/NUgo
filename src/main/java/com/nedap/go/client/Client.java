@@ -24,7 +24,6 @@ public class Client implements Runnable {
     private boolean canStartAGame;
 
 
-
     private static final String WELCOME = "WELCOME";
     private static final String USERNAMETAKEN = "USERNAMETAKEN";
     private static final String JOINED = "JOINED";
@@ -71,7 +70,7 @@ public class Client implements Runnable {
      * Initiation of the handshake.
      */
     private void handShake() {
-        printWriter.println("HELLO"+ Protocol.delimiter+"client description");
+        printWriter.println("HELLO" + Protocol.delimiter + "client description");
         printWriter.flush();
 
     }
@@ -98,12 +97,12 @@ public class Client implements Runnable {
                         System.out.println(splittedLine[1]);
                         System.out.println("please type your username");
                         name = reader.readLine();
-                        sendMessage("USERNAME"+Protocol.delimiter + name);
+                        sendMessage("USERNAME" + Protocol.delimiter + name);
                         break;
                     case USERNAMETAKEN:
                         System.out.println(splittedLine[1]);
                         name = reader.readLine();
-                        sendMessage("USERNAME"+Protocol.delimiter + name);
+                        sendMessage("USERNAME" + Protocol.delimiter + name);
                         break;
                     case JOINED:
                         System.out.println("you now joined the system if you want to play the game go type : GO");
@@ -156,9 +155,8 @@ public class Client implements Runnable {
             printWriter.close();
         } catch (IOException e) {
             System.out.println("unable to close the socket");
-        }
-        catch (NullPointerException e){
-           // This is if never been open.
+        } catch (NullPointerException e) {
+            // This is if never been open.
             System.out.println(" ");
         }
 
@@ -183,21 +181,20 @@ public class Client implements Runnable {
         System.out.println("WELKOM TO THIS GAME");
         System.out.println("" + player1 + " is black and " + player2 + " is white");
         System.out.println("Do you want to play with a computer player type : PC");
-        String playerType ;
+        String playerType;
         try {
-            playerType = reader.readLine() ;
+            playerType = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if( playerType.equalsIgnoreCase("PC")){
+        if (playerType.equalsIgnoreCase("PC")) {
             if (player1.equals(name)) {
                 player = new ComputerPlayer(name, StoneColour.BLACK);
             } else {
                 player = new ComputerPlayer(name, StoneColour.WHITE);
             }
 
-        }
-        else {
+        } else {
             if (player1.equals(name)) {
                 player = new HumanPlayer(name, StoneColour.BLACK, reader);
             } else {
@@ -216,11 +213,14 @@ public class Client implements Runnable {
     private void yourTurn() {
         Move move = player.determineMove();
         String message;
-        if (move != null) {
-            message = "MOVE"+Protocol.delimiter + name + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
-        } else {
+        if (move == null) {
+
             message = "PASS";
 
+        } else if (move.getCol() == -1) {
+            message = "QUIT";
+        } else  { //move != null
+            message = "MOVE" + Protocol.delimiter + name + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
         }
         sendMessage(message);
     }
