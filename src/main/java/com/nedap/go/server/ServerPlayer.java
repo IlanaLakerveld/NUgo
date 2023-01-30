@@ -34,7 +34,6 @@ public class ServerPlayer {
         int[] moveFromClient = cl.getMove();
         if (moveFromClient != null) {
             move = new Move(moveFromClient[0], moveFromClient[1], colour);
-            System.out.println(getName() + "move that is outputted is " + move.getRow() + move.getCol());
         } else { // thus : moveFromClient == null
             System.out.println(getName() + "move is pass");
         }

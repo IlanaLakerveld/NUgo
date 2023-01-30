@@ -1,5 +1,6 @@
 package com.nedap.go.server;
 
+import com.nedap.go.Protocol;
 import com.nedap.go.spel.*;
 
 public class GameGo implements Runnable {
@@ -47,9 +48,9 @@ public class GameGo implements Runnable {
             game.doMove(move);
             // tell players the move
             if (move == null) {
-                sendMessages("MOVE~" + currentPlayer.getName() + "~PASS");
+                sendMessages("MOVE"+Protocol.delimiter + currentPlayer.getName() + Protocol.delimiter +"PASS");
             } else {
-                sendMessages("MOVE~" + currentPlayer.getName() + "~" + move.getRow() + "~" + move.getCol());
+                sendMessages("MOVE"+Protocol.delimiter + currentPlayer.getName() + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol());
             }
 
             // switch players
@@ -62,11 +63,11 @@ public class GameGo implements Runnable {
 
         // end of the game tell players why game over
         if (playerWhite.isConnectionLost()) {
-            sendMessages("GAMEOVER~DISCONNECT~" + playerBlack.getName());
+            sendMessages("GAMEOVER~DISCONNECT"+Protocol.delimiter + playerBlack.getName());
         } else if (playerBlack.isConnectionLost()) {
-            sendMessages("GAMEOVER~DISCONNECT~" + playerWhite.getName());
+            sendMessages("GAMEOVER~DISCONNECT"+Protocol.delimiter + playerWhite.getName());
         } else {
-            sendMessages("GAMEOVER~the player with stone colour~" + game.isWinner());
+            sendMessages("GAMEOVER~the player with stone colour"+Protocol.delimiter + game.isWinner());
         }
 
         setReadBoolean();  //begin no one had read a move;

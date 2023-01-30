@@ -44,10 +44,10 @@ public class ClientTUI {
 
             Client client = new Client(addressSever, port, pipedReader);
             PrintWriter printWriter = new PrintWriter(pipedWriter);
-            client.connect();
+            boolean connectionCorrect = client.connect();
 
             // reads text input if its quit or go it does something otherwise sends it to the client
-            while (!wantToQuit) {
+            while (!wantToQuit && connectionCorrect) {
                 String message = scanner.nextLine();
                 if (message.contains("~")) {
                     System.out.println("you are not allowed to use the ~");

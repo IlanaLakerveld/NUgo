@@ -1,5 +1,6 @@
 package com.nedap.go.server;
 
+import com.nedap.go.Protocol;
 import com.nedap.go.spel.Board;
 import com.nedap.go.spel.StoneColour;
 
@@ -119,8 +120,9 @@ public class Server implements Runnable {
         if(playerQueue.size()  >= 2){
             ServerPlayer player1 = new ServerPlayer(StoneColour.BLACK, (ClientHandler) playerQueue.poll()) ;
             ServerPlayer player2 = new ServerPlayer(StoneColour.WHITE, (ClientHandler) playerQueue.poll()) ;
-            player1.sendMessage("NEWGAME~"+player1.getName()+"~"+player2.getName());
-            player2.sendMessage("NEWGAME~"+player1.getName()+"~"+player2.getName());
+            String message ="NEWGAME"+Protocol.delimiter+player1.getName()+ Protocol.delimiter+player2.getName() ;
+            player1.sendMessage(message);
+            player2.sendMessage(message);
             new Thread(new GameGo(player1,player2, Board.DIM) ).start();
         }
     }

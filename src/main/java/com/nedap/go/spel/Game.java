@@ -304,4 +304,18 @@ public class Game {
         }
     }
 
+   public List<int[]> getEmptyFields(){
+        List<int[]> list = new ArrayList<int[]>();
+        for(int i = 0 ; i<board.DIM ; i++){
+            for(int j = 0 ; j <board.DIM ; j++){
+                if(board.isEmptyField(i,j)){
+
+                    list.add(new int[]{i,j}) ;
+                }
+            }
+        }
+
+        return list ;
+   }
+
 }

@@ -3,6 +3,7 @@ package com.nedap.go.spel;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
@@ -153,8 +154,16 @@ public class GameTest {
         // there are 3 moves done in this game so the list should be of size 3
         assertEquals(game.getListPreviousBoardStates().size(),3,0.0);
 
+    }
 
-
+    @Test
+    public void testGetEmptyFields(){
+        List<int[]> emptyFields = game.getEmptyFields();
+        assertEquals(emptyFields.size(),game.board.DIM*game.board.DIM,0);
+        game.board.setField(1,0,StoneColour.BLACK);
+        game.board.setField(1,1,StoneColour.BLACK);
+        List<int[]> emptyFields2 = game.getEmptyFields();
+        assertEquals(emptyFields2.size(),game.board.DIM*game.board.DIM-2);
     }
 
 }

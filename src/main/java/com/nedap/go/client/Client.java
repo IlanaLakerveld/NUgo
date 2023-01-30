@@ -1,6 +1,7 @@
 package com.nedap.go.client;
 
 
+import com.nedap.go.Protocol;
 import com.nedap.go.spel.Move;
 import com.nedap.go.spel.StoneColour;
 
@@ -51,15 +52,17 @@ public class Client implements Runnable {
     /**
      * Makes a connection with the server.
      */
-    public void connect() {
+    public boolean connect() {
         try {
             socket = new Socket(address, port);
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             printWriter = new PrintWriter(socket.getOutputStream());
             Thread clientThread = new Thread(this);
             clientThread.start();
+            return true;
         } catch (IOException e) {
             System.out.println("Sorry, unable to make an connection. ");
+            return false;
         }
 
     }
@@ -68,7 +71,7 @@ public class Client implements Runnable {
      * Initiation of the handshake.
      */
     private void handShake() {
-        printWriter.println("HELLO~client description");
+        printWriter.println("HELLO"+ Protocol.delimiter+"client description");
         printWriter.flush();
 
     }
@@ -95,12 +98,12 @@ public class Client implements Runnable {
                         System.out.println(splittedLine[1]);
                         System.out.println("please type your username");
                         name = reader.readLine();
-                        sendMessage("USERNAME~" + name);
+                        sendMessage("USERNAME"+Protocol.delimiter + name);
                         break;
                     case USERNAMETAKEN:
                         System.out.println(splittedLine[1]);
                         name = reader.readLine();
-                        sendMessage("USERNAME~" + name);
+                        sendMessage("USERNAME"+Protocol.delimiter + name);
                         break;
                     case JOINED:
                         System.out.println("you now joined the system if you want to play the game go type : GO");
@@ -130,7 +133,7 @@ public class Client implements Runnable {
                         canStartAGame = true;
                         break;
                     default:
-                        System.out.println("default :" + line);
+                        System.out.println("Do not understand this line :" + line);
                         break;
                 }
 
@@ -214,7 +217,7 @@ public class Client implements Runnable {
         Move move = player.determineMove();
         String message;
         if (move != null) {
-            message = "MOVE~" + name + "~" + move.getRow() + "~" + move.getCol();
+            message = "MOVE"+Protocol.delimiter + name + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
         } else {
             message = "PASS";
 

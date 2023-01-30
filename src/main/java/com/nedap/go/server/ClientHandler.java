@@ -1,5 +1,7 @@
 package com.nedap.go.server;
 
+import com.nedap.go.Protocol;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -106,7 +108,7 @@ public class ClientHandler implements Runnable {
             sendMessage("JOINED");
 
         } else {
-            sendMessage("USERNAMETAKEN~username is already taken please use another username");
+            sendMessage("USERNAMETAKEN"+ Protocol.delimiter +"username is already taken please use another username");
         }
 
     }
@@ -116,7 +118,7 @@ public class ClientHandler implements Runnable {
      * Sends a messages about this server to the client.
      */
     private void hello() {
-        sendMessage("WELCOME~This is the server van Ilana");
+        sendMessage("WELCOME"+Protocol.delimiter+"This is the server van Ilana");
     }
 
     /**
@@ -153,7 +155,7 @@ public class ClientHandler implements Runnable {
         try {
             bR.close();
             server.usernames.remove(myUsername);
-            System.out.println("the connection with " + myUsername +" is lost"); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            System.out.println("The connection with " + myUsername +" is lost"); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             setConnectionLost(true);
         } catch (IOException e) {
             System.out.println("cannot close the client Handler");

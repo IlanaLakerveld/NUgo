@@ -5,34 +5,41 @@ import com.nedap.go.spel.StoneColour;
 
 import java.util.List;
 
-public class ComputerPlayer extends Player{
+public class ComputerPlayer extends Player {
     /**
      * Constructor
      *
      * @param name name of the player
      */
     public ComputerPlayer(String name, StoneColour colour) {
-        super(name,colour);
+        super(name, colour);
     }
 
 
-    // get a list of possible moves (posible moves of possible checked moves? )
-    // krijg een random number
-    // kijk of dat een oke number is
-    // return de move
 
     @Override
     public Move determineMove() {
-//        List possibleMoves   ;
-//        if(possibleMoves.size >0){
-//            int randomInt = (int) Math.random()*possibleMoves.size() ;
-//            return possibleMoves.get(randomInt);
-//
-//        }
-//        else{
-//            return null ;  // if no possible moves then pass
-//        }
-//
-        return null;
+        List<int[]> possibleMoves = game.getEmptyFields();
+        return getValidMove(possibleMoves);
+
+
+
+    }
+
+    private Move getValidMove(List<int[]> possibleMoves) {
+        if (possibleMoves.size() > 0) {
+            int randomInt = (int) (Math.random() * possibleMoves.size());
+            System.out.println(randomInt);
+            Move move = new Move(possibleMoves.get(randomInt)[0], possibleMoves.get(randomInt)[1], colour);
+            if (game.isValidMove(move)) {
+                return move;
+            } else {
+                possibleMoves.remove(randomInt);
+                return getValidMove(possibleMoves);
+            }
+
+        } else {
+            return null;
+        }
     }
 }
