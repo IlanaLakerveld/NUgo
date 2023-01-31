@@ -25,7 +25,7 @@ public class GameTest {
     public void gameOverTest(){
         // test of the game give game over if there is passed two times in a row
         game.getListPreviousBoardStates().add(null);
-        game.getListPreviousBoardStates().add(game.getBoard().CopyBoard());
+        game.getListPreviousBoardStates().add(game.getBoard().copyBoard());
         game.getListPreviousBoardStates().add(null);
         assertFalse(game.isGameOver());
         game.getListPreviousBoardStates().add(null);
@@ -60,12 +60,12 @@ public class GameTest {
         game.getBoard().setField(1,1,StoneColour.WHITE);
         game.getBoard().setField(0,2,StoneColour.WHITE);
         game.getBoard().setField(2,2,StoneColour.WHITE);
-        game.getListPreviousBoardStates().add(game.getBoard().CopyBoard());
+        game.getListPreviousBoardStates().add(game.getBoard().copyBoard());
         game.getBoard().setField(1,2,StoneColour.BLACK);
         game.getBoard().setField(0,3,StoneColour.BLACK);
         game.getBoard().setField(2,3,StoneColour.BLACK);
         game.getBoard().setField(1,4,StoneColour.BLACK);
-        game.getListPreviousBoardStates().add(game.getBoard().CopyBoard());
+        game.getListPreviousBoardStates().add(game.getBoard().copyBoard());
         move= new Move(1,3,StoneColour.WHITE);
         assertTrue(game.isValidMove(move));
         game.doMove(move);

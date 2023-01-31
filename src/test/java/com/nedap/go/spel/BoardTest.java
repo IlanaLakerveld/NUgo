@@ -50,7 +50,7 @@ public class BoardTest {
     public void testCopy() {
         board.setField(0, 0, StoneColour.WHITE);
         board.setField(1, 0, StoneColour.BLACK);
-        Board deepCopyBoard = board.CopyBoard();
+        Board deepCopyBoard = board.copyBoard();
 
         // First test if all the fields are the same
         for (int i = 0; i < Board.DIM; i++) {

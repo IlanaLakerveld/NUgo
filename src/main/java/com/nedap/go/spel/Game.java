@@ -72,7 +72,7 @@ public class Game {
         }
         // check if board position is not already been done in the game
         if (listPreviousBoardStates.size() > 0) {
-            Board copyBoard = board.CopyBoard();
+            Board copyBoard = board.copyBoard();
             changeOnboardDoneByMove(move, copyBoard);
             for (Board listPreviousBoardState : listPreviousBoardStates) {
                 // if two board are equal then false
@@ -96,7 +96,7 @@ public class Game {
         } else {
             changeOnboardDoneByMove(move, board);
 
-            listPreviousBoardStates.add(board.CopyBoard());
+            listPreviousBoardStates.add(board.copyBoard());
         }
     }
 
@@ -107,7 +107,7 @@ public class Game {
      * @return a list of the changes needs to update the GUI
      */
     public List<int[]> changesForGUI(Move move) {
-        Board copyBoard = board.CopyBoard();
+        Board copyBoard = board.copyBoard();
         return changeOnboardDoneByMove(move, copyBoard);
     }
 
@@ -118,7 +118,7 @@ public class Game {
      * @param board the board the move is on
      * @return a list of changes on the board
      */
-    private List<int[]> changeOnboardDoneByMove(Move move, Board board) {
+    public List<int[]> changeOnboardDoneByMove(Move move, Board board) {
         int row = move.getRow();
         int col = move.getCol();
         List<int[]> alRemovedValues = new ArrayList<>();

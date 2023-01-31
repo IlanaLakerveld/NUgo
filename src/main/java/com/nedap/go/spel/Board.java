@@ -33,7 +33,7 @@ public class Board {
      *
      * @return A copy of the current board
      */
-    public Board CopyBoard() {
+    public Board copyBoard() {
         Board copyBoard = new Board();
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
