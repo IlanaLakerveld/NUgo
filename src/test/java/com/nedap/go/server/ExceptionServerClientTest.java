@@ -1,5 +1,7 @@
 package com.nedap.go.server;
 
+import com.nedap.go.IncorrectServerClientInputException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,13 +11,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
+/**
+ * Test of het een exception throws
+ */
 public class ExceptionServerClientTest {
 
     private Server server ;
@@ -31,8 +33,20 @@ public class ExceptionServerClientTest {
     }
 
 
+//    @Test(expected = IIncorrectServerClientInputException)
     @Test
-    public void exceptionTest() throws IOException {
+    public void exceptionTest() {
+
+        IncorrectServerClientInputException incorrectServerClientInputException = Assert.assertThrows(IncorrectServerClientInputException.class, () -> test2());
+        assertEquals(" Does not understand the input: incorrecte input", incorrectServerClientInputException.getMessage());
+
+
+
+
+
+    }
+
+    private void test2() throws IOException {
         // the server
         server.start();
         assertTrue(server.isActive());
@@ -41,14 +55,11 @@ public class ExceptionServerClientTest {
         // the client
         InetAddress addressSever = InetAddress.getByName("localhost");
         Socket socketCL = new Socket(addressSever, server.getPort()) ;
-            bufferedReader = new BufferedReader(new InputStreamReader(socketCL.getInputStream()));
-            printWriter = new PrintWriter(socketCL.getOutputStream());
-            // the client says hello
-            printWriter.println("incorrecte input");
-            printWriter.flush();
-            server.stop();
-
-
+        bufferedReader = new BufferedReader(new InputStreamReader(socketCL.getInputStream()));
+        printWriter = new PrintWriter(socketCL.getOutputStream());
+        printWriter.println("incorrect input");
+        printWriter.flush();
+        server.stop();
 
     }
 

@@ -63,11 +63,14 @@ public class GameGo implements Runnable {
 
         // end of the game tell players why game over
         if (playerWhite.isConnectionLost()) {
-            sendMessages("GAMEOVER~DISCONNECT"+Protocol.delimiter + playerBlack.getName());
+            sendMessages("GAMEOVER"+Protocol.delimiter+"DISCONNECT"+Protocol.delimiter + playerBlack.getName());
         } else if (playerBlack.isConnectionLost()) {
-            sendMessages("GAMEOVER~DISCONNECT"+Protocol.delimiter + playerWhite.getName());
+            sendMessages("GAMEOVER"+Protocol.delimiter+"DISCONNECT"+Protocol.delimiter + playerWhite.getName());
         } else {
-            sendMessages("GAMEOVER~the player with stone colour"+Protocol.delimiter + game.isWinner());
+            if(game.isWinner().equals(StoneColour.EMPTY)){
+                sendMessages("GAMEOVER"+Protocol.delimiter+"the player with stone colour"+Protocol.delimiter + "NO WINNER");
+            }
+            sendMessages("GAMEOVER"+Protocol.delimiter+"the player with stone colour"+Protocol.delimiter + game.isWinner());
         }
 
         setReadBoolean();  //begin no one had read a move;

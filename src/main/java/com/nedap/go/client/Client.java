@@ -189,6 +189,7 @@ public class Client implements Runnable {
      */
     private void gameOver(String reason, String winner) {
         System.out.println("Game over  because: " + reason + " the winner is: " + winner);
+        player.stopGUI();
         canStartAGame = true;
     }
 
@@ -266,7 +267,7 @@ public class Client implements Runnable {
      */
     private void yourTurn() {
 
-        Move move = null;
+        Move move ;
 
         try {
             move = player.determineMove();

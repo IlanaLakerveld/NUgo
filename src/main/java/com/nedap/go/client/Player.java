@@ -107,4 +107,9 @@ public abstract class Player {
         return stone.equals(StoneColour.WHITE);
     }
 
+
+    public void stopGUI(){
+        gogui.stopGUI();
+    }
+
 }

@@ -145,7 +145,7 @@ public class Board {
      * @return list of arrays(row,col) that are surrounded.
      */
     public List<int[]> captured(int row, int col) {
-        List<int[]> list = new ArrayList<int[]>();
+        List<int[]> list = new ArrayList<>();
         // check if is actually surrounded
         if (!isSurrounded(row, col)) {
             return null;
@@ -155,10 +155,10 @@ public class Board {
         // check all directions
         list.add(new int[]{row, col});
 
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, new ArrayList<String>()));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, new ArrayList<String>()));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, new ArrayList<String>()));
-        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, new ArrayList<String>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row + 1, col, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row - 1, col, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col + 1, colour, new ArrayList<>()));
+        list.addAll(listOfFieldThatNeedsToBeRemoved(row, col - 1, colour, new ArrayList<>()));
 
         // Because it is an array you can not simply see the duplicates,
         // therefore first made it a string then you can see the duplicates and can remove them with a hashmap after removing the hashmap is returned to an array of strings
@@ -182,8 +182,8 @@ public class Board {
      * @param loopList      This is a list created to contain places the function has been to prevent infinite loops.
      * @return a list of fields that need to be removed
      */
-    private List<int[]> listOfFieldThatNeedsToBeRemoved(int row, int col, StoneColour colour, List loopList) {
-        List<int[]> list = new ArrayList<int[]>();
+    private List<int[]> listOfFieldThatNeedsToBeRemoved(int row, int col, StoneColour colour, List<String> loopList) {
+        List<int[]> list = new ArrayList<>();
         if (!isField(row, col) || getField(row, col) != colour) {
             return list;
         }
@@ -221,7 +221,7 @@ public class Board {
      * @param loopChecker saves places where you have been so that you don't have an infinite loop
      * @return true if on that side the stone is captured i.e. his stone(s) row is followed by either the edge or a stone on the negative side
      */
-    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down,  List loopChecker ) {
+    private boolean checkerSideAreCaptured(int row, int col, StoneColour stone, boolean horizontal, boolean rightSide, boolean down,  List<String> loopChecker ) {
 
         if (!isField(row, col)) {
             return true;

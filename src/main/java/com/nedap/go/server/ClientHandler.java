@@ -145,7 +145,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * This is a case of the switch command.
-     * The clients tells the server that it is quitting.
+     * The client tells the server that it is quitting.
      */
     private void quit() {
         setConnectionLost(true);

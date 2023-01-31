@@ -95,7 +95,11 @@ public class GoGuiIntegrator implements GoGui {
 
 	@Override
 	public synchronized void stopGUI() {
-		// Not implemented yet
+		try {
+			wrappee.stop();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void createWrappedObject() {

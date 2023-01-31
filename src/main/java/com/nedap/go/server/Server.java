@@ -19,13 +19,12 @@ public class Server implements Runnable {
     private int port;
     private boolean active;
     private Thread socketThread;
-    private Queue playerQueue = new LinkedList();
+    private Queue<Object> playerQueue = new LinkedList<>();
     public List<Object> usernames = new ArrayList<>();
-    private List<ClientHandler> clientHandlerList = new ArrayList();
+    private List<ClientHandler> clientHandlerList = new ArrayList<>();
 
     private List<Thread> clThreads = new ArrayList<>();
 
-    private List<Thread> gameThreads = new ArrayList<>();
 
     /**
      * Constructor
@@ -149,9 +148,6 @@ public class Server implements Runnable {
             player1.sendMessage(message);
             player2.sendMessage(message);
             Thread thread = new Thread(new GameGo(player1, player2, Board.DIM));
-            // TODO : hier nog voor zorgen dat je Threads kan opslaan zodat je die ook kan verwijderen.
-
-//            gameThreads.add(thread);
             thread.start();
         }
     }

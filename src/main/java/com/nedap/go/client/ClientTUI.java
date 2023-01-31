@@ -20,16 +20,16 @@ public class ClientTUI {
         Scanner scanner = new Scanner(System.in);
 
         int port = getPortInput.getPort(true);
-        boolean okeInputAdress = false;
+        boolean okeInputAddress = false;
         InetAddress addressSever = null;
-        while (!okeInputAdress) {
+        while (!okeInputAddress) {
             System.out.println("what server address do you want? ");
             String inputAddress = scanner.nextLine();
 
 
             try {
                 addressSever = InetAddress.getByName(inputAddress);
-                okeInputAdress = true;
+                okeInputAddress = true;
             } catch (UnknownHostException e) {
                 System.out.println("please choose a correct input address");
 
@@ -57,20 +57,20 @@ public class ClientTUI {
                 if (message.contains("~")) {
                     System.out.println("you are not allowed to use the ~");
 
-                } else if (message.toLowerCase().equals("quit")) {
+                } else if (message.equalsIgnoreCase("quit")) {
                     wantToQuit = true;
                     client.close();
                     printWriter.close();
                     pipedReader.close();
                     pipedWriter.close();
 
-                } else if (message.toUpperCase().equals("GO")) {
+                } else if (message.equalsIgnoreCase("GO")) {
                     if (client.isAbleToStartAGame()) {
                         client.goToQueue();
                     } else {
                         System.out.println("you can not start a game because you are already in a game or needs to handle the handshake first");
                     }
-                } else if (message.toLowerCase().equals("help")) {
+                } else if (message.equalsIgnoreCase("help")) {
                     System.out.print("""
                             Hello! to play a game first the username needs to be unique and correct.
                             when you want to play a game type GO
@@ -82,7 +82,7 @@ public class ClientTUI {
 
                             """);
                 }
-                else if(message.toLowerCase().equals("rules")){
+                else if(message.equalsIgnoreCase("rules")){
                     System.out.print("""
                 Black makes the first move, after which white and black alternate.
                 A move consists of placing one stone of a player their own color on an empty intersection on the board.
