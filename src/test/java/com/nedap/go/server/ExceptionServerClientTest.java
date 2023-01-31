@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -26,25 +27,28 @@ public class ExceptionServerClientTest {
     @Before
     public void setUp(){
         server = new Server(0);
-        server.start();
-
-        try (Socket socketCL = new Socket("localhost", server.getPort())) {
-            bufferedReader = new BufferedReader(new InputStreamReader(socketCL.getInputStream()));
-            printWriter = new PrintWriter(socketCL.getOutputStream());
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 
 
     @Test
     public void exceptionTest() throws IOException {
+        // the server
+        server.start();
         assertTrue(server.isActive());
-        printWriter.println("hello");
-        System.out.println(bufferedReader.readLine());
+
+
+        // the client
+        InetAddress addressSever = InetAddress.getByName("localhost");
+        Socket socketCL = new Socket(addressSever, server.getPort()) ;
+            bufferedReader = new BufferedReader(new InputStreamReader(socketCL.getInputStream()));
+            printWriter = new PrintWriter(socketCL.getOutputStream());
+            // the client says hello
+            printWriter.println("incorrecte input");
+            printWriter.flush();
+            server.stop();
+
+
 
     }
 

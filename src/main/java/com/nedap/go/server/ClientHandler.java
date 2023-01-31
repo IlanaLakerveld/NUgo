@@ -76,7 +76,8 @@ public class ClientHandler implements Runnable {
                     case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
                     case QUIT -> quit();
                     default ->
-                            throw new IncorrectServerClientInputException("Does not understand the import " + line) ;
+                            throw new IncorrectServerClientInputException("Does not understand the input: " + line) ;
+
                 }
 
             } catch (IOException e) {

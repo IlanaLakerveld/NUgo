@@ -3,10 +3,7 @@ package com.nedap.go.spel;
 import com.nedap.go.BoardCompare;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This is the class game.
@@ -62,7 +59,7 @@ public class Game {
      * @return true if the move is a legal move
      */
     public boolean isValidMove(Move move) {
-        if(move == null){
+        if (move == null) {
             return true; // this is a pass move
         }
         // Check if the move is on the field
@@ -94,10 +91,9 @@ public class Game {
      * @param move the move you want to make. Add a copy of the board because the board can change .
      */
     public void doMove(Move move) {
-        if(move == null){
+        if (move == null) {
             listPreviousBoardStates.add(null);
-        }
-        else {
+        } else {
             changeOnboardDoneByMove(move, board);
 
             listPreviousBoardStates.add(board.CopyBoard());
@@ -106,17 +102,19 @@ public class Game {
 
     /**
      * Gives a list of the changes needs to update the GUI
+     *
      * @param move move that is done
      * @return a list of the changes needs to update the GUI
      */
-    public List<int[]> changesForGUI(Move move){
+    public List<int[]> changesForGUI(Move move) {
         Board copyBoard = board.CopyBoard();
         return changeOnboardDoneByMove(move, copyBoard);
     }
 
     /**
-     * Makes the changes due to the move on the given board
-     * @param move the move
+     * Makes the changes due to a move on the given board and safes them on al list.
+     *
+     * @param move  the move
      * @param board the board the move is on
      * @return a list of changes on the board
      */
@@ -125,44 +123,41 @@ public class Game {
         int col = move.getCol();
         List<int[]> alRemovedValues = new ArrayList<>();
         board.setField(row, col, move.getColour());
-        if (board.isField(row + 1, col) && board.isSurrounded(row + 1, col)) {
-            List<int[]> capturedValues = board.captured(row + 1, col);
-            alRemovedValues.addAll(capturedValues);
-            for (int[] capturedValue : capturedValues) {
-                removeStone(capturedValue[0], capturedValue[1], board);
 
-            }
+        if (board.isField(row + 1, col) && board.isSurrounded(row + 1, col)) {
+            alRemovedValues.addAll(valueRemover(board, row + 1, col));
         }
         if (board.isField(row - 1, col) && board.isSurrounded(row - 1, col)) {
-            List<int[]> capturedValues = board.captured(row - 1, col);
-            alRemovedValues.addAll(capturedValues);
-            for (int[] capturedValue : capturedValues) {
-                removeStone(capturedValue[0], capturedValue[1], board);
-            }
+            alRemovedValues.addAll(valueRemover(board, row - 1, col));
 
         }
         if (board.isField(row, col + 1) && board.isSurrounded(row, col + 1)) {
-            List<int[]> capturedValues = board.captured(row, col + 1);
-            alRemovedValues.addAll(capturedValues);
-            for (int[] capturedValue : capturedValues) {
-                removeStone(capturedValue[0], capturedValue[1], board);
-            }
-
+            alRemovedValues.addAll(valueRemover(board, row , col+1));
         }
+
         if (board.isField(row, col - 1) && board.isSurrounded(row, col - 1)) {
-            List<int[]> capturedValues = board.captured(row, col - 1);
-            alRemovedValues.addAll(capturedValues);
-            for (int[] capturedValue : capturedValues) {
-                removeStone(capturedValue[0], capturedValue[1], board);
-            }
+            alRemovedValues.addAll(valueRemover(board, row , col-1));
         }
         // This one should be last because enemy capture is first
         if (board.isSurrounded(row, col)) {
-            List<int[]> capturedValues = board.captured(row, col);
-            alRemovedValues.addAll(capturedValues);
-            for (int[] capturedValue : capturedValues) {
-                removeStone(capturedValue[0], capturedValue[1], board);
-            }
+            alRemovedValues.addAll(valueRemover(board, row , col));
+        }
+        return alRemovedValues;
+    }
+
+    /**
+     * Removes values of the board
+     * @param board board move is on
+     * @param row row
+     * @param col col
+     * @return list of removed values
+     */
+    private List<int[]> valueRemover(Board board, int row, int col ) {
+        List<int[]> alRemovedValues = new ArrayList<>();
+        List<int[]> capturedValues = board.captured(row , col);
+        alRemovedValues.addAll(capturedValues);
+        for (int[] capturedValue : capturedValues) {
+            removeStone(capturedValue[0], capturedValue[1], board);
 
         }
         return alRemovedValues;
@@ -175,20 +170,19 @@ public class Game {
      */
     public StoneColour isWinner() {
         Map<StoneColour, Integer> score = getScore();
-        if(score.get(StoneColour.WHITE)>score.get(StoneColour.BLACK)){
-            return StoneColour.WHITE ;
-        }
-        else if(score.get(StoneColour.WHITE)<score.get(StoneColour.BLACK)){
+        if (score.get(StoneColour.WHITE) > score.get(StoneColour.BLACK)) {
+            return StoneColour.WHITE;
+        } else if (score.get(StoneColour.WHITE) < score.get(StoneColour.BLACK)) {
             return StoneColour.BLACK;
-        }
-        else {
+        } else {
             return StoneColour.EMPTY;
         }
     }
 
     /**
      * gives a list of all the states the board has had
-     * @return  a list of all the states the board has had
+     *
+     * @return a list of all the states the board has had
      */
     public List<Board> getListPreviousBoardStates() {
         return listPreviousBoardStates;
@@ -196,6 +190,7 @@ public class Game {
 
 
     public Map<StoneColour, Integer> getScore() {
+        
         int capturedByBlack = 0;
         int capturedByWhite = 0;
         List<Move> emptySpace = new ArrayList<>();
@@ -214,96 +209,112 @@ public class Game {
         }
 
         for (Move move : emptySpace) {
-            StoneColour firstSide = findColourSide(move.getRow()+1, move.getCol(), true, true,false,new ArrayList<>());
-            if(firstSide == null){
+            StoneColour firstSide = findSideColour(move, "right");
+            if (firstSide == null) {
                 continue;
             }
-            StoneColour secondSide = findColourSide(move.getRow()-1, move.getCol(), true,false,false,new ArrayList<>()) ;
-            if(secondSide == null){
+            StoneColour secondSide = findSideColour(move, "left");
+            if (secondSide == null) {
                 continue;
             }
             // false if A=B || A=empty || B=empty ;
             // true if (A≠B && A≠empty && B≠empty ;
-            if(!firstSide.equals(secondSide) && !firstSide.equals(StoneColour.EMPTY) && !secondSide.equals(StoneColour.EMPTY)) {
-              continue;
+            if (!firstSide.equals(secondSide) && !firstSide.equals(StoneColour.EMPTY) && !secondSide.equals(StoneColour.EMPTY)) {
+                continue;
             }
-            StoneColour thirdSide = findColourSide(move.getRow(), move.getCol() + 1, false, false, true,new ArrayList<>());
-            if(thirdSide == null){
+
+            StoneColour thirdSide = findSideColour(move, "down");
+            if (thirdSide == null) {
                 continue;
             }
             // false if C=empty || A=B=empty || ((A=empty || A=C) && (B=empty || B=C))
             // true if  C≠empty && (A≠empty || B≠empty) && (A≠empty && A≠C) || (B≠empty && B≠C)
-            if(!thirdSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY))&& ((!firstSide.equals(StoneColour.EMPTY) && !thirdSide.equals(firstSide)) || (!secondSide.equals(StoneColour.EMPTY) && !thirdSide.equals(secondSide)) )) {
-                continue;
-            }
-//
-            // false if D=empty || A=B=C=empty || ((A=empty || A=C) && (B=empty || B=C) && (C=empty || C=D))
-            // true  if D≠empty && (A≠empty || B≠empty || C≠empty) && ((A≠empty && A≠D) || (B≠empty && B≠D) || (C≠empty && C≠D))
-            StoneColour fourthSide = findColourSide(move.getRow(), move.getCol() - 1, false, false, false,new ArrayList<>());
-            if(fourthSide == null){
+            if (!thirdSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY) && secondSide.equals(StoneColour.EMPTY)) && ((!firstSide.equals(StoneColour.EMPTY) && !thirdSide.equals(firstSide)) || (!secondSide.equals(StoneColour.EMPTY) && !thirdSide.equals(secondSide)))) {
                 continue;
             }
 
-            if(!fourthSide.equals(StoneColour.EMPTY )&& !(firstSide.equals(StoneColour.EMPTY)&&secondSide.equals(StoneColour.EMPTY)&& thirdSide.equals(StoneColour.EMPTY))&& ((!firstSide.equals(StoneColour.EMPTY) && !fourthSide.equals(firstSide)) || ( !secondSide.equals(StoneColour.EMPTY) && !fourthSide.equals(secondSide) )|| (!thirdSide.equals(StoneColour.EMPTY) && !fourthSide.equals(thirdSide)))){
+            // false if D=empty || A=B=C=empty || ((A=empty || A=C) && (B=empty || B=C) && (C=empty || C=D))
+            // true  if D≠empty && (A≠empty || B≠empty || C≠empty) && ((A≠empty && A≠D) || (B≠empty && B≠D) || (C≠empty && C≠D))
+            StoneColour fourthSide = findSideColour(move, "up");
+            if (fourthSide == null) {
+                continue;
+            }
+
+
+            if (!fourthSide.equals(StoneColour.EMPTY) && !(firstSide.equals(StoneColour.EMPTY) && secondSide.equals(StoneColour.EMPTY) && thirdSide.equals(StoneColour.EMPTY)) && ((!firstSide.equals(StoneColour.EMPTY) && !fourthSide.equals(firstSide)) || (!secondSide.equals(StoneColour.EMPTY) && !fourthSide.equals(secondSide)) || (!thirdSide.equals(StoneColour.EMPTY) && !fourthSide.equals(thirdSide)))) {
                 continue;
             }
 
             // false if A≠empty || B≠empty || C≠empty || D≠empty
             // true if A=B=C=D=empty
-            if (firstSide.equals(StoneColour.EMPTY)&& secondSide.equals(StoneColour.EMPTY)&&thirdSide.equals(StoneColour.EMPTY)&&fourthSide.equals(StoneColour.EMPTY)){
+            if (firstSide.equals(StoneColour.EMPTY) && secondSide.equals(StoneColour.EMPTY) && thirdSide.equals(StoneColour.EMPTY) && fourthSide.equals(StoneColour.EMPTY)) {
                 continue;
             }
-            if(!firstSide.equals(StoneColour.EMPTY)){
-                if(firstSide.equals(StoneColour.WHITE)){
-
-                    capturedByWhite++;
-                }
-                else{
-                    capturedByBlack++;
-
-                }
-
-            }
-            else if(!secondSide.equals(StoneColour.EMPTY)){
-                if(secondSide.equals(StoneColour.WHITE)){
-                    capturedByWhite++;
-                }
-                else{
-                    capturedByBlack++;
-                }
-
-            }
-            else if(!thirdSide.equals(StoneColour.EMPTY)){
-                if(thirdSide.equals(StoneColour.WHITE)){
-                    capturedByWhite++;
-                }
-                else{
-
-                    capturedByBlack++;
-                }
+            
+            
+            // has has one and only one colour only need to know which colour, so you can add it.
+            if(isCapturedByWhite(firstSide, secondSide, thirdSide, fourthSide)){
+                capturedByWhite++;
             }
             else{
-                if(fourthSide.equals(StoneColour.WHITE)){
-                    capturedByWhite++;
-                }
-                else{
-
-                    capturedByBlack++;
-                }
-
+                capturedByBlack++;
             }
         }
+        // make the return map
         Map<StoneColour, Integer> returnMap = new HashMap<>();
-        returnMap.put(StoneColour.BLACK,capturedByBlack);
-        returnMap.put(StoneColour.WHITE,capturedByWhite);
+        returnMap.put(StoneColour.BLACK, capturedByBlack);
+        returnMap.put(StoneColour.WHITE, capturedByWhite);
         return returnMap;
     }
 
 
     /**
+     *  is used by getScore. When know only one colour is true for one of the four sides this function finds out which solour 
+     * @param firstSide side one
+     * @param secondSide side two
+     * @param thirdSide side three
+     * @param fourthSide side four
+     * @return true if white false if black.
+     */
+    private boolean isCapturedByWhite(StoneColour firstSide, StoneColour secondSide, StoneColour thirdSide, StoneColour fourthSide) {
+        if (!firstSide.equals(StoneColour.EMPTY)) {
+            if (firstSide.equals(StoneColour.WHITE)) {
+                return true;
+
+            } else {
+                return false;
+            }
+
+        } else if (!secondSide.equals(StoneColour.EMPTY)) {
+            if (secondSide.equals(StoneColour.WHITE)) {
+               return true;
+            } else {
+                   return false;
+            }
+
+        } else if (!thirdSide.equals(StoneColour.EMPTY)) {
+            if (thirdSide.equals(StoneColour.WHITE)) {
+                return true ;
+            } else {
+
+                return false;
+            }
+        } else {
+            if (fourthSide.equals(StoneColour.WHITE)) {
+                    return true ;
+            } else {
+                    return false;
+            }
+
+        }
+    }
+
+
+    /**
      * removes stones on a given board
-     * @param row row
-     * @param col col
+     *
+     * @param row   row
+     * @param col   col
      * @param board board that the stone is placed on
      */
     private void removeStone(int row, int col, Board board) {
@@ -311,10 +322,34 @@ public class Game {
 
     }
 
+    /**
+     * gives the right input for the function findColourSide() for a side
+     *
+     * @param move the field
+     * @param side the side you are looking at
+     * @return stonecoulour of the side (output of the function findColourSide()
+     */
+    private StoneColour findSideColour(Move move, String side) {
+        StoneColour returnColour = null;
+        if (side.equals("right")) {
+            returnColour = findColourSide(move.getRow() + 1, move.getCol(), true, true, false, new ArrayList<>());
+        } else if (side.equals("left")) {
+            returnColour = findColourSide(move.getRow() - 1, move.getCol(), true, false, false, new ArrayList<>());
+        } else if (side.equals("down")) {
+            returnColour = findColourSide(move.getRow(), move.getCol() + 1, false, false, true, new ArrayList<>());
+        } else if (side.equals("up")) {
+            returnColour = findColourSide(move.getRow(), move.getCol() - 1, false, false, false, new ArrayList<>());
+        }
 
+        return returnColour;
+    }
+
+
+    
+    
     private StoneColour findColourSide(int row, int col, boolean horizontal, boolean rightSide, boolean down, List loopList) {
-        if(loopList.contains(""+row+col)){
-            return StoneColour.EMPTY ;
+        if (loopList.contains("" + row + col)) {
+            return StoneColour.EMPTY;
         }
         if (!board.isField(row, col)) {
             return StoneColour.EMPTY;
@@ -323,86 +358,77 @@ public class Game {
         } else if (board.getField(row, col).equals(StoneColour.BLACK)) {
             return StoneColour.BLACK;
         } else { // is on the board not black not white so must be empty
-            loopList.add(""+row+col);
-            if(horizontal){
-                if(rightSide){
-                    StoneColour A = findColourSide(row+1,col,true,true, false, loopList) ;
-                    StoneColour B = findColourSide(row,col-1,false,false, false, loopList) ;
-                    StoneColour C = findColourSide(row,col+1,false,false, true, loopList) ;
-                    List<StoneColour> test2 = new ArrayList<StoneColour>();
-                    test2.add(A);
-                    test2.add(B);
-                    test2.add(C);
-                    return testUpdatePuntentelling(test2);
+            loopList.add("" + row + col);
+            List<StoneColour> listOfStonecolourOfThreeSides = new ArrayList<StoneColour>();
+            if (horizontal) {
+                StoneColour A;
+                StoneColour B = findColourSide(row, col - 1, false, false, false, loopList);
+                StoneColour C = findColourSide(row, col + 1, false, false, true, loopList);
+
+                if (rightSide) {
+                    A = findColourSide(row + 1, col, true, true, false, loopList);
+                } else {
+                    A = findColourSide(row - 1, col, true, false, false, loopList);
                 }
-                else{
-                    StoneColour A = findColourSide(row-1,col,true,false,false,loopList);
-                    StoneColour B = findColourSide(row,col-1,false,true, false, loopList) ;
-                    StoneColour C = findColourSide(row,col+1,false,false, true, loopList) ;
-                    List<StoneColour> test2 = new ArrayList<StoneColour>();
-                    test2.add(A);
-                    test2.add(B);
-                    test2.add(C);
-                    return testUpdatePuntentelling(test2);
-                }
-            }
-            else{
+                Collections.addAll(listOfStonecolourOfThreeSides,A,B,C);
+
+            } else {
+                StoneColour A = findColourSide(row + 1, col, true, true, false, loopList);
+                StoneColour B = findColourSide(row - 1, col, true, false, false, loopList);
+                StoneColour C;
+
                 if (down) {
-                    StoneColour A = findColourSide(row+1,col,true,true,false,loopList);
-                    StoneColour B = findColourSide(row-1,col,true,false, false, loopList) ;
-                    StoneColour C = findColourSide(row,col+1,false,false, true, loopList) ;
-                    List<StoneColour> test2 = new ArrayList<StoneColour>();
-                    test2.add(A);
-                    test2.add(B);
-                    test2.add(C);
-                    return testUpdatePuntentelling(test2);
+                    C = findColourSide(row, col + 1, false, false, true, loopList);
 
                 } else {
-                    StoneColour A = findColourSide(row+1,col,true,true,false,loopList);
-                    StoneColour B = findColourSide(row-1,col,true,false, false, loopList) ;
-                    StoneColour C = findColourSide(row,col-1,false,false, false, loopList) ;
-                    List<StoneColour> test2 = new ArrayList<StoneColour>();
-                    test2.add(A);
-                    test2.add(B);
-                    test2.add(C);
-                    return testUpdatePuntentelling(test2);
+                    C = findColourSide(row, col - 1, false, false, false, loopList);
 
                 }
+                Collections.addAll(listOfStonecolourOfThreeSides,A,B,C);
             }
+            return colourCheckSides(listOfStonecolourOfThreeSides);
 
         }
     }
 
-    private  StoneColour testUpdatePuntentelling(List<StoneColour> test2) {
-        if(test2.contains(null)){
+    /**
+     * Checks if the list has more than one colour && has oneColour 
+     * @param listOfStonecolourOfThreeSides stonecolour of three sides 
+     * @return
+     */
+    private StoneColour colourCheckSides(List<StoneColour> listOfStonecolourOfThreeSides) {
+        if (listOfStonecolourOfThreeSides.contains(null)) {
             return null;
         }
-        if(test2.contains(StoneColour.WHITE) && test2.contains(StoneColour.BLACK)){
+        if (listOfStonecolourOfThreeSides.contains(StoneColour.WHITE) && listOfStonecolourOfThreeSides.contains(StoneColour.BLACK)) {
             return null;
-        }
-        else if(test2.contains(StoneColour.WHITE)){
+        } else if (listOfStonecolourOfThreeSides.contains(StoneColour.WHITE)) {
             return StoneColour.WHITE;
-        }
-        else if(test2.contains(StoneColour.BLACK)){
+        } else if (listOfStonecolourOfThreeSides.contains(StoneColour.BLACK)) {
             return StoneColour.BLACK;
-        }
-        else{
+        } else {
             return StoneColour.EMPTY;
         }
     }
 
-    public List<int[]> getEmptyFields(){
-        List<int[]> list = new ArrayList<int[]>();
-        for(int i = 0 ; i<board.DIM ; i++){
-            for(int j = 0 ; j <board.DIM ; j++){
-                if(board.isEmptyField(i,j)){
 
-                    list.add(new int[]{i,j}) ;
+    /**
+     * Checks which fields are empty on the board
+     *
+     * @return a list of empty fields (row, col)
+     */
+    public List<int[]> getEmptyFields() {
+        List<int[]> list = new ArrayList<int[]>();
+        for (int i = 0; i < board.DIM; i++) {
+            for (int j = 0; j < board.DIM; j++) {
+                if (board.isEmptyField(i, j)) {
+
+                    list.add(new int[]{i, j});
                 }
             }
         }
 
-        return list ;
-   }
+        return list;
+    }
 
 }
