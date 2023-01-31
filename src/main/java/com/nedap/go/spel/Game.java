@@ -291,7 +291,6 @@ public class Game {
         if (!firstSide.equals(StoneColour.EMPTY)) {
             if (firstSide.equals(StoneColour.WHITE)) {
                 return true;
-
             } else {
                 return false;
             }
@@ -307,7 +306,6 @@ public class Game {
             if (thirdSide.equals(StoneColour.WHITE)) {
                 return true;
             } else {
-
                 return false;
             }
         } else {
@@ -385,7 +383,6 @@ public class Game {
                 StoneColour C = findColourSide(row, col - 1, Sides.UP, loopList);
                 Collections.addAll(listOfStoneColourOfThreeSides, A, B, C);
 
-            } else {
             }
             return colourCheckSides(listOfStoneColourOfThreeSides);
 

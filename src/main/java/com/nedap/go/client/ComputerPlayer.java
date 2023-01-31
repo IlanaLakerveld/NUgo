@@ -18,7 +18,6 @@ public class ComputerPlayer extends Player {
     }
 
 
-
     @Override
     public Move determineMove() {
 
@@ -30,20 +29,19 @@ public class ComputerPlayer extends Player {
         return findLittleSmarterMove(possibleMoves);
 
 
-
     }
 
     /**
      * If both players pass the game is finished, if you have more points than the other person it is a nice moment to stop
+     *
      * @return true if you should pass
      */
     private boolean canIWinNextMove() {
-        if(game.getListPreviousBoardStates().size()>0 && game.getListPreviousBoardStates().get(game.getListPreviousBoardStates().size()-1) == null){
+        if (game.getListPreviousBoardStates().size() > 0 && game.getListPreviousBoardStates().get(game.getListPreviousBoardStates().size() - 1) == null) {
             Map<StoneColour, Integer> score = game.getScore();
-            if(colour.equals(StoneColour.WHITE) && score.get(StoneColour.WHITE)>score.get(StoneColour.BLACK)){
+            if (colour.equals(StoneColour.WHITE) && score.get(StoneColour.WHITE) > score.get(StoneColour.BLACK)) {
                 return true;
-            }
-            else if(colour.equals(StoneColour.BLACK) && score.get(StoneColour.WHITE)<score.get(StoneColour.BLACK)){
+            } else if (colour.equals(StoneColour.BLACK) && score.get(StoneColour.WHITE) < score.get(StoneColour.BLACK)) {
                 return true;
             }
         }
@@ -53,8 +51,9 @@ public class ComputerPlayer extends Player {
 
     /**
      * Gives a random valid move. If there is no valid move it returns null
+     *
      * @param possibleMoves list empty fields
-     * @return  a valid move (or null if there is no valid moves)
+     * @return a valid move (or null if there is no valid moves)
      */
     private Move findStupidMove(List<int[]> possibleMoves) {
 
@@ -75,75 +74,69 @@ public class ComputerPlayer extends Player {
 
     /**
      * Check what the impact of his move (ONLY HIS) if on the board and depending on that it makes a decision :
+     *
      * @param possibleMoves list of empty fields.
      * @return a move
      */
-    private Move findLittleSmarterMove(List<int[]> possibleMoves){
-        if(possibleMoves.size()<1){
-            return null ;
+    private Move findLittleSmarterMove(List<int[]> possibleMoves) {
+        if (possibleMoves.size() < 1) {
+            return null;
         }
-        QualityOfMove quality =  QualityOfMove.EMPTY ;
+        QualityOfMove quality = QualityOfMove.EMPTY;
         Move bestMoveToMake = null;
-        int amountCaputured = 0 ;
+        int amountCaputured = 0;
 
-        for(int[] currentMove:possibleMoves){
-            Move move = new Move(currentMove[0],currentMove[1], colour);
+        for (int[] currentMove : possibleMoves) {
+            Move move = new Move(currentMove[0], currentMove[1], colour);
 
             if (!game.isValidMove(move)) { // First check if the move is legal
                 continue;
             }
             Board copyBoard = game.getBoard().copyBoard();
             List<int[]> changes = game.changeOnboardDoneByMove(move, copyBoard);
-            if(changes.size()>0){
+            if (changes.size() > 0) {
                 int positiveOrNegativeEffect = 0;
-                for(int[] changedFields :changes){
-                    if(game.getBoard().getField(changedFields[0],changedFields[1]).equals(colour)){
-                        positiveOrNegativeEffect-- ; // a stone of you is captured
-                    }
-                    else{
-                        positiveOrNegativeEffect++ ; // you capture a stone
+                for (int[] changedFields : changes) {
+                    if (game.getBoard().getField(changedFields[0], changedFields[1]).equals(colour)) {
+                        positiveOrNegativeEffect--; // a stone of you is captured
+                    } else {
+                        positiveOrNegativeEffect++; // you capture a stone
                     }
                 }
-                if(positiveOrNegativeEffect>0){
-                    if(quality.equals(QualityOfMove.GOOD)){
-                        if(amountCaputured>positiveOrNegativeEffect){
-                            bestMoveToMake= move;
-                            amountCaputured=positiveOrNegativeEffect;
+                if (positiveOrNegativeEffect > 0) {
+                    if (quality.equals(QualityOfMove.GOOD)) {
+                        if (amountCaputured > positiveOrNegativeEffect) {
+                            bestMoveToMake = move;
+                            amountCaputured = positiveOrNegativeEffect;
                         }
-                    }
-                    else {
+                    } else {
                         bestMoveToMake = move;
                         quality = QualityOfMove.GOOD;
-                        amountCaputured=positiveOrNegativeEffect;
+                        amountCaputured = positiveOrNegativeEffect;
                     }
-                }
-                else if(positiveOrNegativeEffect<0){
-                    if(quality.equals(QualityOfMove.EMPTY)){
-                        bestMoveToMake= move;
-                        quality=QualityOfMove.BAD;
+                } else if (positiveOrNegativeEffect < 0) {
+                    if (quality.equals(QualityOfMove.EMPTY)) {
+                        bestMoveToMake = move;
+                        quality = QualityOfMove.BAD;
                     }
-                }
-                else{
-                    if(quality.equals(QualityOfMove.EMPTY)||quality.equals(QualityOfMove.BAD)) {
+                } else {
+                    if (quality.equals(QualityOfMove.EMPTY) || quality.equals(QualityOfMove.BAD)) {
                         bestMoveToMake = move;
                         quality = QualityOfMove.NEUTRAL;
-                    }
-                    else if(quality.equals(QualityOfMove.NEUTRAL)){
-                        double randomDouble =  Math.random() ;
-                        if(randomDouble>0.5){ // a random factor otherwise it always the first move
+                    } else if (quality.equals(QualityOfMove.NEUTRAL)) {
+                        double randomDouble = Math.random();
+                        if (randomDouble > 0.5) { // a random factor otherwise it always the first move
                             bestMoveToMake = move;
                         }
                     }
                 }
-            }
-            else{
-                if(quality.equals(QualityOfMove.EMPTY)||quality.equals(QualityOfMove.BAD)){
-                    bestMoveToMake= move;
-                    quality=QualityOfMove.NEUTRAL;
-                }
-                else if(quality.equals(QualityOfMove.NEUTRAL)){
-                    double randomDouble =  Math.random() ;
-                    if(randomDouble>0.5){ // a random factor otherwise it always the first move
+            } else {
+                if (quality.equals(QualityOfMove.EMPTY) || quality.equals(QualityOfMove.BAD)) {
+                    bestMoveToMake = move;
+                    quality = QualityOfMove.NEUTRAL;
+                } else if (quality.equals(QualityOfMove.NEUTRAL)) {
+                    double randomDouble = Math.random();
+                    if (randomDouble > 0.5) { // a random factor otherwise it always the first move
                         bestMoveToMake = move;
                     }
                 }
@@ -152,11 +145,9 @@ public class ComputerPlayer extends Player {
 
         }
 
-        if(quality.equals(QualityOfMove.NEUTRAL)||quality.equals(QualityOfMove.GOOD)){
+        if (quality.equals(QualityOfMove.NEUTRAL) || quality.equals(QualityOfMove.GOOD)) {
             return bestMoveToMake;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
