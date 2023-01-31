@@ -48,8 +48,12 @@ public class ClientTUI {
             System.out.println("If you need help type help. If you want to quit type quit");
 
             // reads text input if its quit or go it does something otherwise sends it to the client
-            while (!wantToQuit && connectionCorrect) {
+            while (!wantToQuit && connectionCorrect && client.isConnectionWithServer()) {
+//                while (!wantToQuit && connectionCorrect) {
+
+
                 String message = scanner.nextLine();
+
                 if (message.contains("~")) {
                     System.out.println("you are not allowed to use the ~");
 
@@ -68,17 +72,33 @@ public class ClientTUI {
                     }
                 } else if (message.toLowerCase().equals("help")) {
                     System.out.print("""
-                            Hello! to play a game first the username needs to be unique and correct. 
+                            Hello! to play a game first the username needs to be unique and correct.
                             when you want to play a game type GO
                             when you want do not want to be waiting for a game anymore but you are already in queue type GO to go out of the queue
-                            when you are in the game wait until there is told what you want to do 
+                            when you are in the game wait until there is told what you want to do
                             if you want to quit type quit
-                            NEVER use ~ in anything :) 
-             
+                            NEVER use ~ in anything :)
+                            If you want you want to rules of go type : rules
+
                             """);
-                } else {
+                }
+                else if(message.toLowerCase().equals("rules")){
+                    System.out.print("""
+                Black makes the first move, after which white and black alternate.
+                A move consists of placing one stone of a player their own color on an empty intersection on the board.
+                A player may pass their turn at any time.
+                A stone or solidly connected group of stones of one color is captured and removed from the board when all the intersections directly orthogonally adjacent to it are occupied by the opponent.
+                Self-capture/suicide is allowed.
+                When a suicide move results in capturing a group, the group is removed from the board first and the suiciding stone stays alive.
+                Two consecutive passes will end the game.
+
+                """);
+                }
+                else {
+
                     printWriter.println(message);
                     printWriter.flush();
+
                 }
 
             }

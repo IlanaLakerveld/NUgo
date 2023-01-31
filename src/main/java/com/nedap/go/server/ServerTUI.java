@@ -18,6 +18,7 @@ public class ServerTUI {
 
 
         // The server keeps running until the user types quit
+        System.out.println("The server keeps running until you type quit");
         boolean quit = false;
         while (!quit) {
             if (scanner.nextLine().equalsIgnoreCase("quit")) {

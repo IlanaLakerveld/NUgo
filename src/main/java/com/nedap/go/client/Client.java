@@ -24,6 +24,8 @@ public class Client implements Runnable {
     private Player player;
     private boolean canStartAGame;
 
+    private boolean connectionWithServer;
+
 
     private static final String WELCOME = "WELCOME";
     private static final String USERNAMETAKEN = "USERNAMETAKEN";
@@ -59,6 +61,7 @@ public class Client implements Runnable {
             printWriter = new PrintWriter(socket.getOutputStream());
             Thread clientThread = new Thread(this);
             clientThread.start();
+            connectionWithServer=true;
             return true;
         } catch (IOException e) {
             System.out.println("Sorry, unable to make an connection. ");
@@ -71,7 +74,7 @@ public class Client implements Runnable {
      * Initiation of the handshake.
      */
     private void handShake() {
-        printWriter.println("HELLO" + Protocol.delimiter + "client description");
+        printWriter.println("HELLO" + Protocol.delimiter + "Hello! client description ");
         printWriter.flush();
 
     }
@@ -82,6 +85,7 @@ public class Client implements Runnable {
      */
     @Override
     public void run()  {
+
         handShake();
         while (!socket.isClosed()) {
 
@@ -102,16 +106,18 @@ public class Client implements Runnable {
                     case INVALIDMOVE -> invalidMove();
                     case MOVE -> switchMove(splittedLine);
                     case GAMEOVER -> gameOver(splittedLine[1], splittedLine[2]);
-//                    default -> System.out.println("Do not understand this line :" + line);
                     default -> throw new IncorrectServerClientInputException("Do not understand this line :" + line) ;
                 }
 
             } catch (IOException e) {
                 System.out.println("socket is closed");
+                break;
             }
 
 
         }
+        System.out.println("The server is closed please enter to close everything nicely ");
+        connectionWithServer=false;
     }
 
     /**
@@ -323,6 +329,10 @@ public class Client implements Runnable {
         return canStartAGame;
     }
 
+    public boolean isConnectionWithServer() {
+        return connectionWithServer;
+    }
+
     /**
      * Sends messages to the server
      *
@@ -333,6 +343,8 @@ public class Client implements Runnable {
         printWriter.flush();
 
     }
+
+
 
 }
 

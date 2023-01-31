@@ -23,6 +23,10 @@ public class Server implements Runnable {
     public List<Object> usernames = new ArrayList<>();
     private List<ClientHandler> clientHandlerList = new ArrayList();
 
+    private List<Thread> clThreads = new ArrayList<>();
+
+    private List<Thread> gameThreads = new ArrayList<>();
+
     /**
      * Constructor
      *
@@ -78,8 +82,11 @@ public class Server implements Runnable {
             System.out.println("Server is not active, so unable to stop the server");
             return;
         }
+
+
         try {
             serverSocket.close();
+
         } catch (IOException e) {
             System.out.println("Can not close the server socket");
 
@@ -87,8 +94,23 @@ public class Server implements Runnable {
         try {
             socketThread.join();
         } catch (InterruptedException e) {
-            System.out.println("can not join the socket thread");
+            System.out.println("Can not join the socket thread");
 
+        }
+
+        for( ClientHandler clientHandler: clientHandlerList){
+
+            clientHandler.close();
+        }
+
+        try{
+            for(Thread clThread :clThreads){
+
+                clThread.join();
+            }
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         active = false;
     }
@@ -105,7 +127,10 @@ public class Server implements Runnable {
                 Socket socket = serverSocket.accept(); // Here it waits until it has a connection
                 ClientHandler clientHandler = new ClientHandler(socket, this);
                 clientHandlerList.add(clientHandler);
-                new Thread(clientHandler).start(); // The thread for new client
+
+                Thread thread = new Thread(clientHandler);//.start(); // The thread for new client
+                clThreads.add(thread);
+                thread.start();
             } catch (IOException e) {
                 System.out.println("Server is closed");
             }
@@ -123,7 +148,11 @@ public class Server implements Runnable {
             String message ="NEWGAME"+Protocol.delimiter+player1.getName()+ Protocol.delimiter+player2.getName() ;
             player1.sendMessage(message);
             player2.sendMessage(message);
-            new Thread(new GameGo(player1,player2, Board.DIM) ).start();
+            Thread thread = new Thread(new GameGo(player1, player2, Board.DIM));
+            // TODO : hier nog voor zorgen dat je Threads kan opslaan zodat je die ook kan verwijderen.
+
+//            gameThreads.add(thread);
+            thread.start();
         }
     }
 

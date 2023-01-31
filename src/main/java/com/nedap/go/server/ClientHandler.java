@@ -156,9 +156,9 @@ public class ClientHandler implements Runnable {
      */
     public void close() {
         try {
-            bR.close();
+            socket.close();
             server.usernames.remove(myUsername);
-            System.out.println("The connection with " + myUsername + " is lost"); ////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            bR.close();
             setConnectionLost(true);
         } catch (IOException e) {
             System.out.println("cannot close the client Handler");
