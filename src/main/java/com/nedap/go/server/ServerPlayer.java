@@ -1,5 +1,4 @@
 package com.nedap.go.server;
-
 import com.nedap.go.spel.Move;
 import com.nedap.go.spel.StoneColour;
 
@@ -42,7 +41,7 @@ public class ServerPlayer {
     }
 
     /**
-     * sends a message to the client (by calling the sendMessage function of the clientHandler)
+     * Sends a message to the client (by calling the sendMessage function of the clientHandler)
      * @param message the messages that needed to be sent to the client.
      */
     public void sendMessage(String message) {
@@ -50,7 +49,7 @@ public class ServerPlayer {
     }
 
     /**
-     * get the name of this player
+     * Get the name of this player
      * @return name of this player
      */
     public String getName() {
@@ -58,7 +57,7 @@ public class ServerPlayer {
     }
 
     /**
-     * function that needs to be set in beginning and end of a game. This because of synchronisation.
+     * Function that needs to be set in beginning and end of a game. This because of synchronisation.
      */
     public void setReadBooleanToFalse() {
         cl.setValueRead(true);

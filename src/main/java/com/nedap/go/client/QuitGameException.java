@@ -12,6 +12,6 @@ public class QuitGameException extends IOException {
 
      */
     public QuitGameException() {
-        super("the user has typed quit so want to stop the game ");
+        super("The user has typed quit so want to stop the game ");
     }
 }

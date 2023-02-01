@@ -7,6 +7,9 @@ import com.nedap.go.spel.StoneColour;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This is the class computer player. This extends player.
+ */
 public class ComputerPlayer extends Player {
     /**
      * Constructor
@@ -18,6 +21,10 @@ public class ComputerPlayer extends Player {
     }
 
 
+    /**
+     * Determines the move and check if this is possible.
+     * @return a move
+     */
     @Override
     public Move determineMove() {
 
@@ -125,7 +132,7 @@ public class ComputerPlayer extends Player {
                         quality = QualityOfMove.NEUTRAL;
                     } else if (quality.equals(QualityOfMove.NEUTRAL)) {
                         double randomDouble = Math.random();
-                        if (randomDouble > 0.5) { // a random factor otherwise it always the first move
+                        if (randomDouble < 0.1) { // a random factor otherwise it always the first move
                             bestMoveToMake = move;
                         }
                     }
@@ -136,7 +143,7 @@ public class ComputerPlayer extends Player {
                     quality = QualityOfMove.NEUTRAL;
                 } else if (quality.equals(QualityOfMove.NEUTRAL)) {
                     double randomDouble = Math.random();
-                    if (randomDouble > 0.5) { // a random factor otherwise it always the first move
+                    if (randomDouble < 0.1) { // a random factor otherwise it always the first move
                         bestMoveToMake = move;
                     }
                 }

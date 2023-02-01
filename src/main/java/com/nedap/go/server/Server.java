@@ -11,6 +11,9 @@ import java.util.*;
 
 /**
  * This is the class server.
+ * The server runs on a different thread.
+ * To start the server the function start should be called.
+ * To stop the server teh function stop should be called.
  */
 
 public class Server implements Runnable {
@@ -27,7 +30,7 @@ public class Server implements Runnable {
 
 
     /**
-     * Constructor
+     * Constructor of the class server.
      *
      * @param port on which the server is.
      */

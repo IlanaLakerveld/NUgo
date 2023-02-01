@@ -11,7 +11,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**
- * This is the class client. This communicates with the client handler.
+ * This is the class client. This communicates with the clientHandler.
  */
 public class Client implements Runnable {
     private BufferedReader reader;
@@ -22,8 +22,7 @@ public class Client implements Runnable {
     private Socket socket;
     private String name;
     private Player player;
-    private boolean canStartAGame;
-
+    private boolean canStartAGame; // makes sure that you can only start a game when the handshake is done and is not already in a game
     private boolean connectionWithServer;
 
 
@@ -37,7 +36,7 @@ public class Client implements Runnable {
     private static final String GAMEOVER = "GAMEOVER";
 
     /**
-     * Constructor
+     * Constructor of the client
      *
      * @param address The inetAddress of the server
      * @param port    The port the server is listening on
@@ -74,7 +73,7 @@ public class Client implements Runnable {
      * Initiation of the handshake.
      */
     private void handShake() {
-        printWriter.println("HELLO" + Protocol.delimiter + "Hello! client description ");
+        printWriter.println("HELLO" + Protocol.delimiter + "Hello! A client ");
         printWriter.flush();
 
     }
@@ -131,11 +130,7 @@ public class Client implements Runnable {
             printWriter.close();
         } catch (IOException e) {
             System.out.println("unable to close the socket");
-        } catch (NullPointerException e) {
-            // This is if never been open.
-            System.out.println(" ");
         }
-
         try {
             reader.close();
         } catch (IOException e) {

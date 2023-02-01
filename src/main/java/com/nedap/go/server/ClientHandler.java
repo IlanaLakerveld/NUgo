@@ -33,7 +33,8 @@ public class ClientHandler implements Runnable {
     private static final String QUIT = "QUIT";
 
     /**
-     * constructor
+     * constructor of the clientHandler.
+     * The constructor makes the reader and writer.
      *
      * @param socket the socket from the connection.
      * @param server the server from which the clientHandler is initialized.
@@ -52,7 +53,8 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     * This is the run function. This will handler the incoming input from the client.
+     * This is the run function. While there is an open socket this function will keep running
+     * This function is responsible for processing the input from the client.
      */
     @Override
     public void run() {
@@ -66,7 +68,7 @@ public class ClientHandler implements Runnable {
                     break;
                 }
                 String[] splitLine = line.split("~");
-                System.out.println("the input line is :" + line);
+                System.out.println("the input line is :" + line); // Prints the input line
                 switchStatementInput(line, splitLine);
 
             } catch (IOException e) {
@@ -80,9 +82,9 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     *
-     * @param line
-     * @param splitLine
+     * handels the input in a switch statement
+     * @param line the input line
+     * @param splitLine the input line splitted by the ~
      */
     public void switchStatementInput(String line, String[] splitLine) {
         switch (splitLine[0].toUpperCase()) {
@@ -187,7 +189,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * username getter
+     * Username getter
      *
      * @return username of the client.
      */
@@ -239,7 +241,7 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     * set value before a game and after a game is finished.
+     * Set value before a game and after a game is finished.
      * This boolean is used for synchronisation.
      *
      * @param valueRead a boolean value that is true if there is a move to that can be read.
@@ -258,7 +260,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * used to handle the case the connection is lost on the moment the game is waiting for a move
+     * Used to handle the case the connection is lost on the moment the game is waiting for a move
      *
      * @param connectionLost boolean value that is true if the connection is lost
      */

@@ -16,11 +16,11 @@ public abstract class Player {
     protected String name;
     protected StoneColour colour ;
     protected final Game game ;
-    private GoGuiIntegrator gogui;
+    private GoGuiIntegrator gogui; // for the GUI
 
 
     /**
-     *
+     * Constructor
      * @param name name of the player
      * @param colour colour of the stone the person has
      */
@@ -35,11 +35,11 @@ public abstract class Player {
 
     }
 
-
-
     /**
-     * Determine which move the person wants to make
+     * Determine which move the person wants to make.
+     * This function is abstracht
      * @return move that person wants to make
+     * @throws QuitGameException human player can throws this exception
      */
     public abstract Move determineMove() throws QuitGameException;
 

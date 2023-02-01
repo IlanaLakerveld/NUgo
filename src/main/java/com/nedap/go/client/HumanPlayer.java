@@ -17,8 +17,9 @@ public class HumanPlayer extends Player {
 
     /**
      * Constructor
-     *
      * @param name name of the player
+     * @param colour stone colour
+     * @param input reader
      */
     public HumanPlayer(String name, StoneColour colour, Reader input) {
         super(name, colour);

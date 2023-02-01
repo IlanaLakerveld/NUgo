@@ -3,6 +3,9 @@ package com.nedap.go.server;
 import com.nedap.go.Protocol;
 import com.nedap.go.spel.*;
 
+/**
+ * This class has the flow of the game. This is a runnable class.
+ */
 public class GameGo implements Runnable {
     private ServerPlayer playerBlack;
     private ServerPlayer playerWhite;
@@ -33,18 +36,9 @@ public class GameGo implements Runnable {
 
         currentPlayer = playerBlack; // player 1 ( Black ) always starts
         boolean gameStop = false;
-        while (!gameStop && !playerBlack.isConnectionLost() && !playerWhite.isConnectionLost()) {
-            boolean checkMove = false;
-            Move move = null;
-            while (!checkMove) {
-                move = currentPlayer.determineMove();
-                if (game.isValidMove(move)) {
-                    checkMove = true;
-                } else {
-                    currentPlayer.sendMessage("INVALIDMOVE");
-                }
-            }
+        while (!gameStop && !playerBlack.isConnectionLost() && !playerWhite.isConnectionLost()) { // game should stop if the rules tell that should stop of the connection is lost
 
+            Move move = getMove(); // the move of the player.
             game.doMove(move);
             // tell players the move
             if (move == null) {
@@ -53,8 +47,7 @@ public class GameGo implements Runnable {
                 sendMessages("MOVE"+Protocol.delimiter + currentPlayer.getName() + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol());
             }
 
-            // switch players
-            switchPlayer();
+            switchPlayer();   // switch players
             if (game.isGameOver()) {
                 gameStop = true;
             }
@@ -62,6 +55,35 @@ public class GameGo implements Runnable {
         }
 
         // end of the game tell players why game over
+        endOfTheGame(); // tells everyone why the game is over.
+
+        setReadBoolean();  //begin no one had read a move;
+
+    }
+
+
+    /**
+     * Gets the move of the player
+     * @return the move
+     */
+    private Move getMove() {
+        boolean checkMove = false;
+        Move move =null;
+        while (!checkMove) {
+            move = currentPlayer.determineMove();
+            if (game.isValidMove(move)) {
+                checkMove = true;
+            } else {
+                currentPlayer.sendMessage("INVALIDMOVE");
+            }
+        }
+        return move;
+    }
+
+    /**
+     * Tells everyone why teh game is over
+     */
+    private void endOfTheGame() {
         if (playerWhite.isConnectionLost()) {
             sendMessages("GAMEOVER"+Protocol.delimiter+"DISCONNECT"+Protocol.delimiter + playerBlack.getName());
         } else if (playerBlack.isConnectionLost()) {
@@ -72,13 +94,10 @@ public class GameGo implements Runnable {
             }
             sendMessages("GAMEOVER"+Protocol.delimiter+"the player with stone colour"+Protocol.delimiter + game.isWinner());
         }
-
-        setReadBoolean();  //begin no one had read a move;
-
     }
 
     /**
-     * switch te current player.
+     * Switch te current player.
      */
     private void switchPlayer() {
         if (currentPlayer.equals(playerBlack)) {

@@ -1,8 +1,6 @@
 package com.nedap.go.spel;
 
 import com.nedap.go.BoardCompare;
-
-
 import java.util.*;
 
 /**
