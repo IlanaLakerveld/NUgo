@@ -6,7 +6,7 @@ import com.nedap.go.BoardCompare;
 import java.util.*;
 
 /**
- * This is the class game.
+ * This is the class game. The rules of the game are in this class.
  */
 
 public class Game {
@@ -17,7 +17,7 @@ public class Game {
 
 
     /**
-     * constructor
+     * Constructor
      *
      * @param board the board the game is played on
      */
@@ -26,15 +26,19 @@ public class Game {
         this.board = board;
     }
 
-
+    /**
+     * Get function
+     * @return returns the board.
+     */
     public Board getBoard() {
         return board;
     }
 
     /**
+     * Checks if there is a reason the game is over;
      * A game is ended if : there is no more space left on the board, there are two passes(indicated by null in listPreviousBoardStates ) or manually when someone left the game
      *
-     * @return true if the game should if ended
+     * @return true if its game over
      */
     public boolean isGameOver() {
 
@@ -86,7 +90,7 @@ public class Game {
     }
 
     /**
-     * Set the move to the field
+     * Set the move to the field.
      *
      * @param move the move you want to make. Add a copy of the board because the board can change .
      */
@@ -101,10 +105,10 @@ public class Game {
     }
 
     /**
-     * Gives a list of the changes needs to update the GUI
+     * Gives a list of the changes needs to update the GUI.
      *
      * @param move move that is done
-     * @return a list of the changes needs to update the GUI
+     * @return a list of the changes needs to update the GUI.
      */
     public List<int[]> changesForGUI(Move move) {
         Board copyBoard = board.copyBoard();
@@ -112,7 +116,7 @@ public class Game {
     }
 
     /**
-     * Makes the changes due to a move on the given board and safes them on al list.
+     * Makes the changes due to a move on the given board and safes the changed fields on the list.
      *
      * @param move  the move
      * @param board the board the move is on
@@ -146,7 +150,7 @@ public class Game {
     }
 
     /**
-     * Removes values of the board
+     * Removes values of the board.
      *
      * @param board board move is on
      * @param row   row
@@ -164,9 +168,9 @@ public class Game {
     }
 
     /**
-     * will calculate the winner
+     * Will calculate the winner.
      *
-     * @return the colour of the winner
+     * @return the colour of the Winner
      */
     public StoneColour isWinner() {
         Map<StoneColour, Integer> score = getScore();
@@ -188,9 +192,14 @@ public class Game {
         return listPreviousBoardStates;
     }
 
-
+    /**
+     * Calculates the score based on  the area rule.
+     * It first checks how many stones both players have on the board after that it checks how many space the players have captured.
+     *
+     * @return a map with the stoneColour and the amount of points the player has.
+     */
     public Map<StoneColour, Integer> getScore() {
-
+        // this part counts how many stones there are on the board and create a list with empty spaces
         int capturedByBlack = 0;
         int capturedByWhite = 0;
         List<Move> emptySpace = new ArrayList<>();
@@ -207,6 +216,7 @@ public class Game {
             }
         }
 
+        // This part is will check for each space if this is captured.
         for (Move move : emptySpace) {
             StoneColour firstSide = findSideColour(move, Sides.RIGHT);
             if (firstSide == null) {
@@ -264,11 +274,11 @@ public class Game {
 
 
     /**
-     * Creates a returns map
+     * Creates a returns map with stone colours and the amount of point this colour has
      *
-     * @param capturedByBlack amount of stones captures by black.
-     * @param capturedByWhite amount of stones captured by white.
-     * @return a map with colour and amount of captured fields
+     * @param capturedByBlack amount points for  black.
+     * @param capturedByWhite amount points for white.
+     * @return a map with colour and amount of captured fields.
      */
     private Map<StoneColour, Integer> getStoneColourIntegerMap(int capturedByBlack, int capturedByWhite) {
         Map<StoneColour, Integer> returnMap = new HashMap<>();
@@ -279,7 +289,7 @@ public class Game {
 
 
     /**
-     * is used by getScore. When know only one colour is true for one of the four sides this function finds out which colour
+     * Is used by getScore. When know only one colour is true for one of the four sides this function finds out which colour.
      *
      * @param firstSide  side one
      * @param secondSide side two
@@ -320,11 +330,11 @@ public class Game {
 
 
     /**
-     * removes stones on a given board
+     * Removes stones on a given board.
      *
      * @param row   row
      * @param col   col
-     * @param board board that the stone is placed on
+     * @param board board that the stone is placed on.
      */
     private void removeStone(int row, int col, Board board) {
         board.setField(row, col, StoneColour.EMPTY);
@@ -332,7 +342,7 @@ public class Game {
     }
 
     /**
-     * gives the right input for the function findColourSide() for a side
+     * Gives the right input for the function findColourSide() for a side.
      *
      * @param move the field
      * @param side the side you are looking at
@@ -348,9 +358,19 @@ public class Game {
         };
     }
 
+    /**
+     * Checks which stoneColour the neighbour has. and if it is empty it check the neighbour neighbours.
+     * If empty it checks three sides of the neighbour (the fourth side is the stone you started with)
+     *
+     * @param row row
+     * @param col col
+     * @param side enum side which is on
+     * @param loopList list needed to prevent an endless loop
+     * @return one of this options null/white/black/empty
+     */
     private StoneColour findColourSide(int row, int col, Sides side, List<String> loopList) {
         if (loopList.contains("" + row + col)) {
-            return StoneColour.EMPTY;
+            return StoneColour.EMPTY; // already seen this stones return empty to prevent looping
         }
         if (!board.isField(row, col)) {
             return StoneColour.EMPTY;

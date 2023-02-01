@@ -66,19 +66,8 @@ public class ClientHandler implements Runnable {
                     break;
                 }
                 String[] splitLine = line.split("~");
-                String command = splitLine[0].toUpperCase();
                 System.out.println("the input line is :" + line);
-                switch (command) {
-                    case HELLO -> hello();
-                    case USERNAME -> username(splitLine[1]);
-                    case QUEUE -> queue();
-                    case PASS -> pass();
-                    case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
-                    case QUIT -> quit();
-                    default ->
-                            throw new IncorrectServerClientInputException("Does not understand the input: " + line) ;
-
-                }
+                switchStatementInput(line, splitLine);
 
             } catch (IOException e) {
                 System.out.println("Connection with a client is lost"); //This is seen on the server output
@@ -87,6 +76,26 @@ public class ClientHandler implements Runnable {
 
         }
         close();
+    }
+
+
+    /**
+     *
+     * @param line
+     * @param splitLine
+     */
+    public void switchStatementInput(String line, String[] splitLine) {
+        switch (splitLine[0].toUpperCase()) {
+            case HELLO -> hello();
+            case USERNAME -> username(splitLine[1]);
+            case QUEUE -> queue();
+            case PASS -> pass();
+            case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
+            case QUIT -> quit();
+            default ->
+                    throw new IncorrectServerClientInputException("Does not understand the input: " + line) ;
+
+        }
     }
 
 

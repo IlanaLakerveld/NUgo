@@ -38,7 +38,7 @@ public class ExceptionServerClientTest {
     public void exceptionTest() {
 
         IncorrectServerClientInputException incorrectServerClientInputException = Assert.assertThrows(IncorrectServerClientInputException.class, () -> test2());
-        assertEquals(" Does not understand the input: incorrecte input", incorrectServerClientInputException.getMessage());
+        assertEquals(" Does not understand the input: incorrect input", incorrectServerClientInputException.getMessage());
 
 
 
