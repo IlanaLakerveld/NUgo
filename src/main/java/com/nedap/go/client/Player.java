@@ -53,12 +53,12 @@ public abstract class Player {
         }
         else {
 
-            gogui.addStone(move.getRow(), move.getCol(), isStoneWhite(move.getColour()));
+            gogui.addStone( move.getCol(), move.getRow(),isStoneWhite(move.getColour()));
             List<int[]> removedStones = game.changesForGUI(move);
             if(removedStones!=null) {
                 for (int[] removedStone : removedStones) {
 
-                    gogui.removeStone(removedStone[0], removedStone[1]);
+                    gogui.removeStone(removedStone[1], removedStone[0]);
                 }
             }
 

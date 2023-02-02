@@ -92,7 +92,7 @@ public class ComputerPlayer extends Player {
         QualityOfMove quality = QualityOfMove.EMPTY;
         Move bestMoveToMake = null;
         int amountCaputured = 0;
-
+        double changeValue = 0.3 ;
         for (int[] currentMove : possibleMoves) {
             Move move = new Move(currentMove[0], currentMove[1], colour);
 
@@ -132,7 +132,8 @@ public class ComputerPlayer extends Player {
                         quality = QualityOfMove.NEUTRAL;
                     } else if (quality.equals(QualityOfMove.NEUTRAL)) {
                         double randomDouble = Math.random();
-                        if (randomDouble < 0.1) { // a random factor otherwise it always the first move
+                        if (randomDouble > changeValue) { // a random factor otherwise it always the first move
+                            changeValue=updateRandomFactor(changeValue);
                             bestMoveToMake = move;
                         }
                     }
@@ -143,7 +144,8 @@ public class ComputerPlayer extends Player {
                     quality = QualityOfMove.NEUTRAL;
                 } else if (quality.equals(QualityOfMove.NEUTRAL)) {
                     double randomDouble = Math.random();
-                    if (randomDouble < 0.1) { // a random factor otherwise it always the first move
+                    if (randomDouble > changeValue) { // a random factor otherwise it always the first move
+                        changeValue=updateRandomFactor(changeValue);
                         bestMoveToMake = move;
                     }
                 }
@@ -157,5 +159,14 @@ public class ComputerPlayer extends Player {
         } else {
             return null;
         }
+    }
+
+
+
+    private double updateRandomFactor(double random){
+        if(random < 0.95 && random > 0.3) {
+            return  (random + 0.05) ;
+        }
+        return random ;
     }
 }

@@ -5,8 +5,10 @@ import com.nedap.go.spel.Board;
 import com.nedap.go.spel.StoneColour;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.*;
 
 /**

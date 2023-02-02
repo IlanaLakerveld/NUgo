@@ -90,9 +90,9 @@ public class GameGo implements Runnable {
             sendMessages("GAMEOVER"+Protocol.delimiter+"DISCONNECT"+Protocol.delimiter + playerWhite.getName());
         } else {
             if(game.isWinner().equals(StoneColour.EMPTY)){
-                sendMessages("GAMEOVER"+Protocol.delimiter+"the player with stone colour"+Protocol.delimiter + "NO WINNER");
+                sendMessages("GAMEOVER"+Protocol.delimiter+"VICTORY"+Protocol.delimiter + "NO WINNER");
             }
-            sendMessages("GAMEOVER"+Protocol.delimiter+"the player with stone colour"+Protocol.delimiter + game.isWinner());
+            sendMessages("GAMEOVER"+Protocol.delimiter+"VICTORY"+Protocol.delimiter + game.isWinner());
         }
     }
 

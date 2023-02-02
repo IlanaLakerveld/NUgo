@@ -92,7 +92,7 @@ public class ClientHandler implements Runnable {
             case USERNAME -> username(splitLine[1]);
             case QUEUE -> queue();
             case PASS -> pass();
-            case MOVE -> move(Integer.parseInt(splitLine[2]), Integer.parseInt(splitLine[3]));
+            case MOVE -> move(Integer.parseInt(splitLine[1]), Integer.parseInt(splitLine[2]));
             case QUIT -> quit();
             default ->
                     throw new IncorrectServerClientInputException("Does not understand the input: " + line) ;
@@ -171,6 +171,7 @@ public class ClientHandler implements Runnable {
             socket.close();
             server.usernames.remove(myUsername);
             bR.close();
+            pW.close();
             setConnectionLost(true);
         } catch (IOException e) {
             System.out.println("cannot close the client Handler");
@@ -204,7 +205,7 @@ public class ClientHandler implements Runnable {
      * @return int[] = row,col
      */
     public synchronized int[] getMove() {
-        while (valueRead && !connectionLost) {
+        while (valueRead && !connectionLost) { //
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -213,7 +214,9 @@ public class ClientHandler implements Runnable {
         }
         valueRead = true;
         notifyAll();
-        return currentMove;
+        int[] returnMove = currentMove;
+        currentMove = null;
+        return returnMove;
     }
 
     /**

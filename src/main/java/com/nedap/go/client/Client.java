@@ -115,7 +115,7 @@ public class Client implements Runnable {
 
 
         }
-        System.out.println("The server is closed please enter to close everything nicely ");
+        System.out.println("The server is closed or you stopped the game , please enter to close everything nicely ");
         connectionWithServer=false;
     }
 
@@ -124,6 +124,8 @@ public class Client implements Runnable {
      */
     public void close() {
 
+        printWriter.println("QUIT");
+        printWriter.flush();
 
         try {
             socket.close();
@@ -273,7 +275,7 @@ public class Client implements Runnable {
 
 
             } else { //move != null
-                message = "MOVE" + Protocol.delimiter + name + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
+                message = "MOVE"  + Protocol.delimiter + move.getRow() + Protocol.delimiter + move.getCol();
             }
             sendMessage(message);
 

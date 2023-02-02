@@ -58,7 +58,7 @@ public class HandshakeTest {
         assertTrue(bufferedReader.readLine().contains("JOINED"));
         printWriter.println("USERNAME" + Protocol.delimiter + "ilana");
         printWriter.flush();
-        assertTrue(bufferedReader.readLine().contains("USERNAMETAKEN~"));
+        assertTrue(bufferedReader.readLine().contains("USERNAMETAKEN"+ Protocol.delimiter));
     }
 
 
