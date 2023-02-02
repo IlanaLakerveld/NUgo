@@ -160,7 +160,7 @@ public class Client implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (playerType.equalsIgnoreCase("PC")) {
+        if (playerType !=null && playerType.equalsIgnoreCase("PC")) {
             if (player1.equals(name)) {
                 player = new ComputerPlayer(name, StoneColour.BLACK);
             } else {

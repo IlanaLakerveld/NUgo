@@ -58,28 +58,6 @@ public class ComputerPlayer extends Player {
 
 
     /**
-     * Gives a random valid move. If there is no valid move it returns null
-     * @param possibleMoves list empty fields
-     * @return a valid move (or null if there is no valid moves)
-     */
-    private Move findStupidMove(List<int[]> possibleMoves) {
-
-        if (possibleMoves.size() > 0) {
-            int randomInt = (int) (Math.random() * possibleMoves.size());
-            Move move = new Move(possibleMoves.get(randomInt)[0], possibleMoves.get(randomInt)[1], colour);
-            if (game.isValidMove(move)) {
-                return move;
-            } else {
-                possibleMoves.remove(randomInt);
-                return findStupidMove(possibleMoves);
-            }
-
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * Check what the impact of his move (ONLY HIS) if on the board and depending on that it makes a decision :
      *
      * @param possibleMoves list of empty fields.
