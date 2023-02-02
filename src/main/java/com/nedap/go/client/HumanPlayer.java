@@ -1,5 +1,6 @@
 package com.nedap.go.client;
 
+import com.nedap.go.spel.Board;
 import com.nedap.go.spel.Move;
 import com.nedap.go.spel.StoneColour;
 
@@ -51,9 +52,9 @@ public class HumanPlayer extends Player {
         while (!moveOke) {
             int row;
             int col;
-            System.out.println(" which move you want to make tell the row");
+            System.out.println(" which move you want to make tell the row, type a number between 0 and "+ (Board.DIM-1) );
             row = checkIfItsAnInteger();
-            System.out.println(" which move you want to make tell the col ");
+            System.out.println(" which move you want to make tell the col, type a number between 0 and "+ (Board.DIM-1));
             col = checkIfItsAnInteger();
             move = new Move(row, col, colour);
             if (game.isValidMove(move)) {
