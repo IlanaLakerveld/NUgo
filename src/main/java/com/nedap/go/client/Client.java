@@ -185,7 +185,14 @@ public class Client implements Runnable {
      * @param winner the winner of the game
      */
     private void gameOver(String reason, String winner) {
-        System.out.println("Game over  because: " + reason + " the winner is: " + winner);
+        if(reason.equals("VICTORY")){
+            System.out.println("Game over because somebody won the game" );
+            System.out.println("The score is as follows : ");
+            player.endScore() ;
+            System.out.println("The winner is :" +winner);
+        } else if (reason.equals("DISCONNECT")) {
+            System.out.println("The game is over because someone disconnected from the server the winner is :" +winner);
+        }
         player.stopGUI();
         canStartAGame = true;
     }

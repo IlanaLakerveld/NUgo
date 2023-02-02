@@ -6,6 +6,7 @@ import com.nedap.go.spel.Game;
 import com.nedap.go.spel.Move;
 import com.nedap.go.spel.StoneColour;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is the Abstract class player. Human player en computer player extends this class.
@@ -37,9 +38,9 @@ public abstract class Player {
 
     /**
      * Determine which move the person wants to make.
-     * This function is abstracht
+     * This function is abstract
      * @return move that person wants to make
-     * @throws QuitGameException human player can throws this exception
+     * @throws QuitGameException human player can throw this exception
      */
     public abstract Move determineMove() throws QuitGameException;
 
@@ -108,8 +109,19 @@ public abstract class Player {
     }
 
 
+    /**
+     * Stops the GUI
+     */
     public void stopGUI(){
+
         gogui.stopGUI();
     }
 
+
+
+    public void endScore(){
+        Map<StoneColour, Integer> score = game.getScore();
+        System.out.println("You have " + score.get(colour) +" points and the opponent has " + score.get(getColourOpponent()) +" points" );
+
+    }
 }

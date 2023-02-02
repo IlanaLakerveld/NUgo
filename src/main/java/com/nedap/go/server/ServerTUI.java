@@ -16,7 +16,6 @@ public class ServerTUI {
         server.start();
         System.out.println("The server port is " + server.getPort());
 
-
         // The server keeps running until the user types quit
         System.out.println("The server keeps running until you type quit");
         boolean quit = false;
