@@ -6,5 +6,5 @@ package com.nedap.go.spel;
  */
 public enum Sides {
 
-    RIGHT,LEFT,DOWN,UP ;
+    RIGHT,LEFT,DOWN,UP
 }
