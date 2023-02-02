@@ -82,9 +82,9 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     * handels the input in a switch statement
+     * handles the input in a switch statement
      * @param line the input line
-     * @param splitLine the input line splitted by the ~
+     * @param splitLine the input line divided by the ~
      */
     public void switchStatementInput(String line, String[] splitLine) {
         switch (splitLine[0].toUpperCase()) {
